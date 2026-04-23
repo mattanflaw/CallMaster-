@@ -1,75 +1,438 @@
-<!DOCTYPE html>
+l<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PORTOR – Créez votre SaaS</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CallMaster | Formation Centre d'Appels Maroc</title>
+  <style>
+    /* ========== STYLE DIRECT INTÉGRÉ (pas de dépendance externe) ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0a0a0f;
+      font-family: system-ui, -apple-system, 'Segoe UI', 'Inter', sans-serif;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    /* Cartes glassmorphism */
+    .card {
+      background: rgba(18, 18, 28, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1px solid #2d2d44;
+      border-radius: 1rem;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-block;
+      text-align: center;
+    }
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+    .btn-secondary {
+      background: #1f2937;
+      border: 1px solid #8b5cf6;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .text-violet {
+      color: #c084fc;
+    }
+    .bg-violet {
+      background: #8b5cf6;
+    }
+    .quiz-option {
+      background: #1e1e2a;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .quiz-option.selected {
+      background: #8b5cf6;
+      color: white;
+    }
+    input, select, textarea {
+      background: #1f2937;
+      border: 1px solid #374151;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      color: white;
+      width: 100%;
+      margin-bottom: 0.75rem;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .toast {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #10b981;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      z-index: 1000;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .toast.error {
+      background: #ef4444;
+    }
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(to right, #ffffff, #c084fc, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    @media (min-width: 768px) {
+      h1 { font-size: 4rem; }
+      .container { padding: 2rem; }
+    }
+  </style>
 </head>
 <body>
-  <div class="bg-animation"></div>
-  <div class="container">
-    <div class="glass-card">
-      <!-- Logo PORTOR avec </> -->
-      <div class="logo">
-        <span class="logo-name">PORTOR</span>
-      </div>
+<div id="app" class="container"></div>
 
-      <div class="badge">
-        <i class="fas fa-code"></i> Création SaaS sur mesure
+<script>
+  // ========== STOCKAGE LOCAL ==========
+  const STORAGE = {
+    users: "callmaster_users",
+    formations: "callmaster_lessons",
+    reservations: "callmaster_reservations",
+    payments: "callmaster_payments",
+    currentUser: "callmaster_currentUser"
+  };
+
+  // Données par défaut (modules)
+  const defaultLessons = [
+    { id: "l1", title: "📞 Introduction au métier de call center", content: "Découvrez les types de centres d'appels (inbound/outbound), les soft skills indispensables, et les évolutions de carrière au Maroc.", isPremium: false, order: 1, quiz: null },
+    { id: "l2", title: "🗣️ Techniques de communication pro", content: "Écoute active, maîtrise de la voix, gestion du stress, reformulation et empathie.", isPremium: false, order: 2, quiz: null },
+    { id: "l3", title: "📝 Phrases professionnelles clés", content: "Scripts d'appels types : ouverture, gestion des objections, prise de rendez-vous.", isPremium: false, order: 3, quiz: { question: "Quelle phrase est idéale pour débuter un appel professionnel ?", options: ["Allô ?", "Bonjour, je vous écoute", "Bonjour, je suis [Nom] de [Société], comment puis-je vous aider ?"], correct: 2 } },
+    { id: "l4", title: "🔥 Gestion des clients difficiles", content: "Méthode LAEC (Lire, Accuser, Expliquer, Conclure) + exemples concrets.", isPremium: false, order: 4, quiz: null },
+    { id: "l5", title: "🎯 Préparation à l'entretien call center", content: "Questions types RH, astuces CV, tenue vestimentaire, mise en situation.", isPremium: false, order: 5, quiz: null },
+    { id: "p1", title: "⭐ Premium : Négociation & Vente", content: "Vidéo exclusive + PDF + cas pratiques pour devenir un conseiller commercial.", isPremium: true, order: 6, quiz: null },
+    { id: "p2", title: "⭐ Premium : Simulation d'appel avancée", content: "Replay d'une session réelle avec feedback d'expert.", isPremium: true, order: 7, quiz: null }
+  ];
+
+  function initData() {
+    if (!localStorage.getItem(STORAGE.users)) {
+      const users = [
+        { id: "u1", name: "Admin CallMaster", email: "admin@callmaster.ma", whatsapp: "+212600000000", password: "admin123", level: "Expert", isAdmin: true, purchasedPremium: true, completedLessons: [], reservations: [] },
+        { id: "u2", name: "Yassine Maroc", email: "test@maroc.ma", whatsapp: "+212612345678", password: "test123", level: "Débutant", isAdmin: false, purchasedPremium: false, completedLessons: [], reservations: [] }
+      ];
+      localStorage.setItem(STORAGE.users, JSON.stringify(users));
+    }
+    if (!localStorage.getItem(STORAGE.formations)) {
+      localStorage.setItem(STORAGE.formations, JSON.stringify(defaultLessons));
+    }
+    if (!localStorage.getItem(STORAGE.reservations)) {
+      localStorage.setItem(STORAGE.reservations, JSON.stringify([]));
+    }
+    if (!localStorage.getItem(STORAGE.payments)) {
+      localStorage.setItem(STORAGE.payments, JSON.stringify([]));
+    }
+  }
+  initData();
+
+  // Helpers
+  function getUsers() { return JSON.parse(localStorage.getItem(STORAGE.users)); }
+  function saveUsers(users) { localStorage.setItem(STORAGE.users, JSON.stringify(users)); }
+  function getLessons() { return JSON.parse(localStorage.getItem(STORAGE.formations)); }
+  function saveLessons(lessons) { localStorage.setItem(STORAGE.formations, JSON.stringify(lessons)); }
+  function getReservations() { return JSON.parse(localStorage.getItem(STORAGE.reservations)); }
+  function saveReservations(res) { localStorage.setItem(STORAGE.reservations, JSON.stringify(res)); }
+  function getPayments() { return JSON.parse(localStorage.getItem(STORAGE.payments)); }
+  function savePayments(payments) { localStorage.setItem(STORAGE.payments, JSON.stringify(payments)); }
+  function getCurrentUser() { return JSON.parse(localStorage.getItem(STORAGE.currentUser)); }
+  function setCurrentUser(user) { localStorage.setItem(STORAGE.currentUser, JSON.stringify(user)); }
+  function clearCurrentUser() { localStorage.removeItem(STORAGE.currentUser); }
+
+  function updateUser(updatedUser) {
+    const users = getUsers();
+    const idx = users.findIndex(u => u.id === updatedUser.id);
+    if (idx !== -1) users[idx] = updatedUser;
+    saveUsers(users);
+    if (getCurrentUser()?.id === updatedUser.id) setCurrentUser(updatedUser);
+  }
+
+  function showToast(msg, isError = false) {
+    const div = document.createElement('div');
+    div.className = isError ? 'toast error' : 'toast';
+    div.textContent = msg;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3000);
+  }
+
+  // État de navigation
+  let currentView = 'home';
+  let selectedLessonId = null;
+  let pendingProduct = null;
+
+  function navigate(view, data = null) {
+    currentView = view;
+    if (view === 'lessonDetail') selectedLessonId = data;
+    if (view === 'payment') pendingProduct = data;
+    render();
+    window.scrollTo(0, 0);
+  }
+
+  // Rendu principal
+  function render() {
+    const app = document.getElementById('app');
+    const user = getCurrentUser();
+    if (currentView === 'home') app.innerHTML = renderHome(user);
+    else if (currentView === 'login') app.innerHTML = renderLogin();
+    else if (currentView === 'register') app.innerHTML = renderRegister();
+    else if (currentView === 'dashboard') {
+      if (!user) { navigate('login'); showToast('Veuillez vous connecter', true); return; }
+      app.innerHTML = renderDashboard(user);
+    }
+    else if (currentView === 'formation') {
+      if (!user) { navigate('login'); return; }
+      app.innerHTML = renderFormationList(user);
+    }
+    else if (currentView === 'lessonDetail') {
+      if (!user) { navigate('login'); return; }
+      app.innerHTML = renderLessonDetail(user, selectedLessonId);
+    }
+    else if (currentView === 'reservation') {
+      if (!user) { navigate('login'); return; }
+      app.innerHTML = renderReservationPage(user);
+    }
+    else if (currentView === 'payment') {
+      if (!user) { navigate('login'); return; }
+      app.innerHTML = renderPaymentPage(user, pendingProduct);
+    }
+    else if (currentView === 'faq') app.innerHTML = renderFAQ();
+    else if (currentView === 'admin') {
+      if (!user || !user.isAdmin) { showToast('Accès refusé', true); navigate('home'); return; }
+      app.innerHTML = renderAdminDashboard(user);
+    }
+    attachEvents();
+  }
+
+  // ========== COMPOSANTS UI ==========
+  function renderHome(user) {
+    return `
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <h1>CallMaster</h1>
+        <p style="font-size: 1.2rem; margin-top: 1rem; color: #cbd5e1;">Décrochez votre premier emploi en centre d'appels au Maroc, même sans expérience.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+          <button class="btn-primary" onclick="window.navigateView('register')">✨ Commencer gratuitement</button>
+          <button class="btn-secondary" onclick="window.navigateView('login')">🔐 Se connecter</button>
+        </div>
       </div>
-      <h1>Donnez vie à <span class="gradient-text">votre idée SaaS</span></h1>
-      <p class="subtitle">De l'idée au lancement. Remplissez le formulaire et recevez une proposition personnalisée.</p>
-      
-      <form id="requestForm">
-        <div class="input-group">
-          <i class="fas fa-user"></i>
-          <input type="text" name="name" placeholder="Nom complet" required>
+      <div class="grid-3">
+        <div class="card" style="padding: 1.5rem; text-align: center;">
+          <div style="font-size: 2.5rem;">📘</div>
+          <h3 style="margin: 0.5rem 0;">Parcours gratuit</h3>
+          <p>5 modules essentiels + quiz</p>
         </div>
-        <div class="input-group">
-          <i class="fas fa-phone-alt"></i>
-          <input type="tel" name="phone" placeholder="Téléphone (optionnel)">
+        <div class="card" style="padding: 1.5rem; text-align: center;">
+          <div style="font-size: 2.5rem;">⭐</div>
+          <h3 style="margin: 0.5rem 0;">Formation premium</h3>
+          <p>Certificat & simulations avancées</p>
         </div>
-        <div class="input-group">
-          <i class="fas fa-envelope"></i>
-          <input type="email" name="email" placeholder="Adresse email" required>
+        <div class="card" style="padding: 1.5rem; text-align: center;">
+          <div style="font-size: 2.5rem;">🎧</div>
+          <h3 style="margin: 0.5rem 0;">Coaching réel</h3>
+          <p>Session 1:1 avec expert</p>
         </div>
-        <div class="input-group">
-          <i class="fas fa-cube"></i>
-          <input type="text" name="project" placeholder="Nom de votre SaaS" required>
-        </div>
-        <div class="input-group">
-          <i class="fas fa-comment"></i>
-          <textarea name="description" rows="4" placeholder="Décrivez votre besoin (fonctionnalités clés, public cible...)" required></textarea>
-        </div>
-        <div class="input-group">
-          <i class="fas fa-money-bill-wave"></i>
-          <select name="budget">
-            <option value="" disabled selected>Budget estimé (MAD)</option>
-            <option>Moins de 5 000 MAD</option>
-            <option>5 000 - 15 000 MAD</option>
-            <option>15 000 - 30 000 MAD</option>
-            <option>30 000 - 50 000 MAD</option>
-            <option>Plus de 50 000 MAD</option>
+      </div>
+      <div class="card" style="padding: 1.5rem; text-align: center; margin-top: 2rem;">
+        <p style="font-style: italic;">"Grâce à CallMaster, j'ai été embauché en 2 semaines !"</p>
+        <p style="font-weight: bold;">– Salma, Casablanca</p>
+      </div>
+      <div style="text-align: center; margin-top: 2rem;">
+        <button class="btn-secondary" onclick="window.navigateView('faq')">❓ FAQ & Questions fréquentes</button>
+      </div>
+    `;
+  }
+
+  function renderLogin() {
+    return `
+      <div class="card" style="max-width: 400px; margin: 2rem auto; padding: 2rem;">
+        <h2 style="margin-bottom: 1rem;">Connexion</h2>
+        <form id="loginForm">
+          <input type="email" id="loginEmail" placeholder="Email" required>
+          <input type="password" id="loginPassword" placeholder="Mot de passe" required>
+          <button type="submit" class="btn-primary" style="width: 100%;">Se connecter</button>
+        </form>
+        <p style="margin-top: 1rem; text-align: center;">Pas de compte ? <button onclick="window.navigateView('register')" style="background: none; border: none; color: #c084fc; cursor: pointer;">Inscription</button></p>
+      </div>
+    `;
+  }
+
+  function renderRegister() {
+    return `
+      <div class="card" style="max-width: 400px; margin: 2rem auto; padding: 2rem;">
+        <h2 style="margin-bottom: 1rem;">Inscription</h2>
+        <form id="registerForm">
+          <input type="text" id="regName" placeholder="Nom complet" required>
+          <input type="email" id="regEmail" placeholder="Email" required>
+          <input type="tel" id="regWhatsapp" placeholder="WhatsApp" required>
+          <input type="password" id="regPassword" placeholder="Mot de passe" required>
+          <select id="regLevel">
+            <option>Débutant</option>
+            <option>Intermédiaire</option>
           </select>
-        </div>
-        <button type="submit" id="submitBtn">
-          <span>Envoyer ma demande</span>
-          <i class="fas fa-arrow-right"></i>
-        </button>
-        <p id="formStatus"></p>
-      </form>
-      
-      <div class="trust-badge">
-        <i class="fas fa-shield-alt"></i> Données sécurisées &nbsp;|&nbsp;
-        <i class="fas fa-clock"></i> Réponse sous 24h
+          <button type="submit" class="btn-primary" style="width: 100%;">Créer mon compte</button>
+        </form>
+        <p style="margin-top: 1rem; text-align: center;"><button onclick="window.navigateView('login')" style="background: none; border: none; color: #c084fc; cursor: pointer;">Déjà inscrit ? Connexion</button></p>
       </div>
-    </div>
-  </div>
-  <script src="script.js"></script>
-</body>
-</html>
+    `;
+  }
+
+  function renderDashboard(user) {
+    const lessons = getLessons();
+    const total = lessons.length;
+    const completed = user.completedLessons?.length || 0;
+    const sessions = getReservations().filter(r => r.userId === user.id);
+    return `
+      <div class="flex-between">
+        <h2>📊 Tableau de bord, ${user.name}</h2>
+        <button class="btn-secondary" onclick="window.logout()">Déconnexion</button>
+      </div>
+      <div class="grid-3" style="margin-top: 1.5rem;">
+        <div class="card" style="padding: 1rem;"><div>Progression: ${completed}/${total}</div><div style="background:#374151; border-radius:999px; height:8px; margin-top:8px;"><div style="width:${(completed/total)*100}%; background:#8b5cf6; height:8px; border-radius:999px;"></div></div></div>
+        <div class="card" style="padding: 1rem;"><div>Premium: ${user.purchasedPremium ? '✅ Activé' : '🔒 Non acheté'}</div><button onclick="window.buyPremium()" class="btn-primary" style="margin-top:8px; padding:4px 12px; font-size:0.8rem;">Acheter 199 MAD</button></div>
+        <div class="card" style="padding: 1rem;"><div>Sessions: ${sessions.length}</div><button onclick="window.navigateView('reservation')" class="text-violet" style="background:none; border:none; color:#c084fc; margin-top:8px;">📅 Réserver une simulation</button></div>
+      </div>
+      <div class="card" style="padding: 1.5rem; margin-top: 1.5rem;">
+        <h3>📚 Mes formations</h3>
+        <button onclick="window.navigateView('formation')" class="btn-primary" style="margin-top: 0.5rem;">Accéder aux modules</button>
+      </div>
+      ${sessions.length ? `<div class="card" style="margin-top:1rem; padding:1rem;"><h3>📌 Historique réservations</h3>${sessions.map(s => `<div>${s.type} - ${s.dateTime} (${s.status})</div>`).join('')}</div>` : ''}
+      ${user.isAdmin ? `<div style="margin-top:1rem;"><button onclick="window.navigateView('admin')" class="btn-primary" style="background:#7c3aed;">🛠️ Panel Admin</button></div>` : ''}
+    `;
+  }
+
+  function renderFormationList(user) {
+    const lessons = getLessons();
+    const premium = user.purchasedPremium;
+    return `
+      <button onclick="window.navigateView('dashboard')" class="btn-secondary" style="margin-bottom:1rem;">← Retour</button>
+      <h2>📖 Modules de formation</h2>
+      <div style="margin-top:1rem;">
+        ${lessons.map(l => {
+          const locked = l.isPremium && !premium;
+          return `<div class="card" style="padding:1rem; margin-bottom:0.75rem; display:flex; justify-content:space-between; align-items:center;"><span>${l.title} ${l.isPremium ? '⭐' : ''}</span><button onclick="window.openLesson('${l.id}')" class="btn-primary" style="padding:0.25rem 1rem;" ${locked ? 'disabled' : ''}>${locked ? '🔒 Premium' : 'Voir'}</button></div>`;
+        }).join('')}
+      </div>
+      ${!premium ? `<div class="card" style="margin-top:1rem; padding:1rem; background:#2e1a47;"><p>🔓 Débloquez tous les modules premium pour 199 MAD.</p><button onclick="window.buyPremium()" class="btn-primary">Upgrade maintenant</button></div>` : ''}
+    `;
+  }
+
+  function renderLessonDetail(user, lessonId) {
+    const lesson = getLessons().find(l => l.id === lessonId);
+    if (!lesson) return '<div>Leçon introuvable</div>';
+    const completed = user.completedLessons?.includes(lessonId);
+    const quiz = lesson.quiz;
+    return `
+      <button onclick="window.navigateView('formation')" class="btn-secondary">← Retour</button>
+      <div class="card" style="margin-top:1rem; padding:1.5rem;">
+        <h2>${lesson.title}</h2>
+        <div style="margin:1rem 0; background:#00000033; padding:1rem; border-radius:0.75rem;">${lesson.content}</div>
+        ${quiz ? `
+          <div id="quizBlock" style="margin-top:1rem; border-top:1px solid #374151; padding-top:1rem;">
+            <p><strong>${quiz.question}</strong></p>
+            ${quiz.options.map((opt, idx) => `<div class="quiz-option" data-opt="${idx}">${opt}</div>`).join('')}
+            <button id="validateQuiz" class="btn-primary" style="margin-top:0.5rem;">Valider</button>
+            <p id="quizFeedback"></p>
+          </div>
+        ` : ''}
+        ${!completed ? `<button id="markComplete" class="btn-primary" style="margin-top:1rem;">✅ Marquer comme terminé</button>` : `<p style="color:#10b981;">✔️ Leçon complétée !</p>`}
+      </div>
+    `;
+  }
+
+  function renderReservationPage(user) {
+    return `
+      <button onclick="window.navigateView('dashboard')" class="btn-secondary">← Retour</button>
+      <div class="card" style="max-width:500px; margin:1rem auto; padding:1.5rem;">
+        <h2>📅 Réserver une simulation</h2>
+        <form id="reserveForm">
+          <select id="sessionType"><option>Simulation d'entretien</option><option>Coaching individuel</option><option>Questions / réponses</option></select>
+          <input type="date" id="sessionDate" required>
+          <input type="time" id="sessionTime" required>
+          <p>💰 Prix: 100 MAD</p>
+          <button type="submit" class="btn-primary" style="width:100%;">Procéder au paiement</button>
+        </form>
+      </div>
+    `;
+  }
+
+  function renderPaymentPage(user, product) {
+    const amount = product?.type === 'premium' ? 199 : 100;
+    const desc = product?.type === 'premium' ? 'Formation Premium' : `Session ${product?.sessionType || 'coaching'}`;
+    return `
+      <div class="card" style="max-width:500px; margin:2rem auto; padding:1.5rem;">
+        <h2>💳 Paiement sécurisé</h2>
+        <p>${desc}</p>
+        <p style="font-size:1.5rem; font-weight:bold;">${amount} MAD</p>
+        <select id="paymentMethod" style="margin:1rem 0;">
+          <option>Carte bancaire (CIH, BMCE)</option><option>CMI</option><option>PayPal</option><option>Virement bancaire</option><option>Orange Money</option>
+        </select>
+        <button id="confirmPayment" class="btn-primary" style="width:100%;">✅ Confirmer le paiement</button>
+      </div>
+    `;
+  }
+
+  function renderFAQ() {
+    const faqs = [
+      ["La formation gratuite est-elle suffisante ?", "Oui, vous aurez les bases. Premium ajoute simulations et certificat."],
+      ["Combien de temps pour être prêt ?", "1 à 2 semaines avec 30 min/jour."],
+      ["Aide pour les entretiens ?", "Oui, simulations réelles et coaching."],
+      ["Paiement plus tard ?", "Possible sur demande (contact)."],
+      ["Adapté aux débutants ?", "100% débutant friendly."]
+    ];
+    return `
+      <button onclick="window.navigateView('home')" class="btn-secondary">← Accueil</button>
+      <h2 style="margin:1rem 0;">❓ Foire aux questions</h2>
+      ${faqs.map(q => `<div class="card" style="margin-bottom:1rem; padding:1rem;"><h3>${q[0]}</h3><p>${q[1]}</p></div>`).join('')}
+    `;
+  }
+
+  function renderAdminDashboard(admin) {
+    const users = getUsers();
+    const lessons = getLessons();
+    const payments
