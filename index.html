@@ -435,4 +435,180 @@ l<!DOCTYPE html>
   function renderAdminDashboard(admin) {
     const users = getUsers();
     const lessons = getLessons();
-    const payments
+    const payments = getPayments();
+    return `
+      <h2>🛡️ Admin CallMaster</h2>
+      <div class="grid-3" style="margin:1rem 0;">
+        <div class="card" style="padding:1rem;">👥 Utilisateurs: ${users.length}</div>
+        <div class="card" style="padding:1rem;">📚 Modules: ${lessons.length}</div>
+        <div class="card" style="padding:1rem;">💰 Paiements: ${payments.length}</div>
+      </div>
+      <div class="card" style="padding:1rem; margin-bottom:1rem;">
+        <h3>➕ Gérer formations</h3>
+        <button onclick="window.addLesson()" class="btn-primary" style="margin:0.5rem 0;">Ajouter un module</button>
+        ${lessons.map(l => `<div style="display:flex; justify-content:space-between; margin-top:0.5rem;"><span>${l.title} ${l.isPremium ? '(premium)' : ''}</span><div><button onclick="window.editLesson('${l.id}')" style="background:#f59e0b; border:none; padding:0.2rem 0.8rem; border-radius:0.5rem;">✏️</button> <button onclick="window.deleteLesson('${l.id}')" style="background:#ef4444; border:none; padding:0.2rem 0.8rem; border-radius:0.5rem;">🗑️</button></div></div>`).join('')}
+      </div>
+      <div class="card" style="padding:1rem;">
+        <h3>Utilisateurs</h3>
+        ${users.map(u => `<div style="display:flex; justify-content:space-between;"><span>${u.name} (${u.email})</span><button onclick="window.messageUser('${u.id}')" class="btn-secondary" style="padding:0.2rem 0.8rem;">📨 Message</button></div>`).join('')}
+      </div>
+    `;
+  }
+
+  // ========== GESTIONNAIRES D'ÉVÉNEMENTS ==========
+  function attachEvents() {
+    // Login
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+      loginForm.onsubmit = (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const pwd = document.getElementById('loginPassword').value;
+        const user = getUsers().find(u => u.email === email && u.password === pwd);
+        if (user) { setCurrentUser(user); showToast(`Bienvenue ${user.name}`); navigate('dashboard'); }
+        else showToast('Email ou mot de passe incorrect', true);
+      };
+    }
+    // Register
+    const regForm = document.getElementById('registerForm');
+    if (regForm) {
+      regForm.onsubmit = (e) => {
+        e.preventDefault();
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const whatsapp = document.getElementById('regWhatsapp').value;
+        const pwd = document.getElementById('regPassword').value;
+        const level = document.getElementById('regLevel').value;
+        if (getUsers().find(u => u.email === email)) { showToast('Email déjà utilisé', true); return; }
+        const newUser = { id: Date.now().toString(), name, email, whatsapp, password: pwd, level, isAdmin: false, purchasedPremium: false, completedLessons: [], reservations: [] };
+        const users = getUsers();
+        users.push(newUser);
+        saveUsers(users);
+        setCurrentUser(newUser);
+        showToast('Compte créé avec succès !');
+        navigate('dashboard');
+      };
+    }
+    // Reservation
+    const reserveForm = document.getElementById('reserveForm');
+    if (reserveForm) {
+      reserveForm.onsubmit = (e) => {
+        e.preventDefault();
+        const sessionType = document.getElementById('sessionType').value;
+        const date = document.getElementById('sessionDate').value;
+        const time = document.getElementById('sessionTime').value;
+        if (!date || !time) { showToast('Date et heure requises', true); return; }
+        navigate('payment', { type: 'session', sessionType, dateTime: `${date} ${time}` });
+      };
+    }
+    // Paiement
+    const confirmBtn = document.getElementById('confirmPayment');
+    if (confirmBtn && currentView === 'payment') {
+      confirmBtn.onclick = () => {
+        const method = document.getElementById('paymentMethod').value;
+        const user = getCurrentUser();
+        const product = pendingProduct;
+        if (!product) return;
+        const payment = { id: Date.now(), userId: user.id, email: user.email, amount: product.type === 'premium' ? 199 : 100, method, date: new Date().toISOString() };
+        const payments = getPayments();
+        payments.push(payment);
+        savePayments(payments);
+        if (product.type === 'premium') {
+          user.purchasedPremium = true;
+          updateUser(user);
+          showToast('Formation premium activée !');
+          navigate('dashboard');
+        } else {
+          const reservations = getReservations();
+          const newRes = { id: Date.now(), userId: user.id, type: product.sessionType, dateTime: product.dateTime, status: 'confirmée', paymentId: payment.id };
+          reservations.push(newRes);
+          saveReservations(reservations);
+          if (!user.reservations) user.reservations = [];
+          user.reservations.push(newRes.id);
+          updateUser(user);
+          showToast(`Session réservée le ${product.dateTime}`);
+          navigate('dashboard');
+        }
+      };
+    }
+    // Marquer terminé
+    const markBtn = document.getElementById('markComplete');
+    if (markBtn && currentView === 'lessonDetail') {
+      markBtn.onclick = () => {
+        const user = getCurrentUser();
+        if (!user.completedLessons.includes(selectedLessonId)) {
+          user.completedLessons.push(selectedLessonId);
+          updateUser(user);
+          showToast('Progression mise à jour !');
+          render();
+        }
+      };
+    }
+    // Quiz validation
+    const validateQuiz = document.getElementById('validateQuiz');
+    if (validateQuiz && currentView === 'lessonDetail') {
+      const lesson = getLessons().find(l => l.id === selectedLessonId);
+      if (lesson?.quiz) {
+        let selectedOpt = null;
+        document.querySelectorAll('.quiz-option').forEach(el => {
+          el.onclick = function() {
+            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedOpt = parseInt(this.dataset.opt);
+          };
+        });
+        validateQuiz.onclick = () => {
+          const feedback = document.getElementById('quizFeedback');
+          if (selectedOpt === lesson.quiz.correct) feedback.innerHTML = '<span style="color:#10b981;">✅ Bonne réponse !</span>';
+          else feedback.innerHTML = '<span style="color:#ef4444;">❌ Réessayez, relisez le module.</span>';
+        };
+      }
+    }
+  }
+
+  // ========== FONCTIONS GLOBALES (pour les onclick) ==========
+  window.navigateView = navigate;
+  window.logout = () => { clearCurrentUser(); navigate('home'); showToast('Déconnecté'); };
+  window.buyPremium = () => navigate('payment', { type: 'premium' });
+  window.openLesson = (id) => {
+    const user = getCurrentUser();
+    const lesson = getLessons().find(l => l.id === id);
+    if (lesson?.isPremium && !user?.purchasedPremium) { showToast('Achetez la formation premium pour accéder', true); return; }
+    navigate('lessonDetail', id);
+  };
+  window.addLesson = () => {
+    const title = prompt('Titre du module');
+    if (!title) return;
+    const isPremium = confirm('Module premium ?');
+    const newLesson = { id: 'l'+Date.now(), title, content: 'Nouveau contenu à éditer', isPremium, order: 999, quiz: null };
+    const lessons = getLessons();
+    lessons.push(newLesson);
+    saveLessons(lessons);
+    render();
+    showToast('Module ajouté');
+  };
+  window.editLesson = (id) => {
+    const lessons = getLessons();
+    const lesson = lessons.find(l => l.id === id);
+    const newTitle = prompt('Modifier titre', lesson.title);
+    if (newTitle) lesson.title = newTitle;
+    saveLessons(lessons);
+    render();
+  };
+  window.deleteLesson = (id) => {
+    if (confirm('Supprimer ce module ?')) {
+      let lessons = getLessons().filter(l => l.id !== id);
+      saveLessons(lessons);
+      render();
+    }
+  };
+  window.messageUser = (userId) => {
+    const msg = prompt('Message à envoyer :');
+    if (msg) showToast(`Message envoyé à l'utilisateur (simulation)`);
+  };
+
+  // Premier rendu
+  render();
+</script>
+</body>
+</html>
