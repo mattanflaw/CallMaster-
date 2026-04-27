@@ -1,614 +1,1225 @@
-l<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>CallMaster | Formation Centre d'Appels Maroc</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Call Master — Formation Entretien Centre d'Appel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
   <style>
-    /* ========== STYLE DIRECT INTÉGRÉ (pas de dépendance externe) ========== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    /* ── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #09080f;
+      --surface: #110f1e;
+      --surface2: #17142a;
+      --border: rgba(255,255,255,0.07);
+      --accent: #a855f7;
+      --accent2: #7c3aed;
+      --accent3: #f472b6;
+      --text: #ede9f8;
+      --muted: #6b6488;
+      --card-glow: 0 0 40px rgba(168,85,247,0.1);
+      --r: 16px;
     }
+    html { scroll-behavior: smooth; }
     body {
-      background: #0a0a0f;
-      font-family: system-ui, -apple-system, 'Segoe UI', 'Inter', sans-serif;
-      color: #e5e7eb;
-      line-height: 1.5;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.5rem;
+    h1,h2,h3,h4,h5 { font-family: 'Syne', sans-serif; }
+
+    /* ── Nav ─────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 40px;
+      background: rgba(10,13,20,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
     }
-    /* Cartes glassmorphism */
-    .card {
-      background: rgba(18, 18, 28, 0.85);
-      backdrop-filter: blur(4px);
-      border: 1px solid #2d2d44;
-      border-radius: 1rem;
-      transition: transform 0.2s ease;
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .progress-bar-nav {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .3s; z-index: 200; width: 0%;
     }
-    .card:hover {
-      transform: translateY(-4px);
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 80px;
+      position: relative; overflow: hidden;
     }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 30%, rgba(168,85,247,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 70%, rgba(124,58,237,0.08) 0%, transparent 60%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 80%);
+    }
+    #hero > * { position: relative; z-index: 1; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.25);
+      color: var(--accent); border-radius: 100px;
+      padding: 6px 16px; font-size: 0.78rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; margin-bottom: 28px;
+    }
+    .badge::before { content: '●'; font-size: 0.5rem; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    h1.hero-title {
+      font-size: clamp(2.6rem, 6vw, 4.5rem);
+      font-weight: 800; line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+    h1.hero-title em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      max-width: 560px; color: var(--muted); font-size: 1.1rem;
+      line-height: 1.7; margin-bottom: 44px;
+    }
+    .btn-group { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
     .btn-primary {
-      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-      border: none;
-      color: white;
-      font-weight: bold;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-block;
-      text-align: center;
+      background: var(--accent); color: #0a0d14;
+      border: none; border-radius: 10px;
+      padding: 14px 30px; font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 0.95rem; cursor: pointer;
+      transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
     }
-    .btn-primary:active {
-      transform: scale(0.97);
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(168,85,247,0.4); }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 30px; font-family: 'Syne', sans-serif;
+      font-weight: 600; font-size: 0.95rem; cursor: pointer;
+      transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
     }
-    .btn-secondary {
-      background: #1f2937;
-      border: 1px solid #8b5cf6;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.75rem;
-      cursor: pointer;
-      font-weight: 600;
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); }
+    .hero-stats {
+      display: flex; gap: 48px; margin-top: 64px;
+      padding-top: 48px; border-top: 1px solid var(--border);
     }
-    .text-violet {
-      color: #c084fc;
+    .stat-item { text-align: center; }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--text); }
+    .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; letter-spacing: .04em; }
+
+    /* ── Section Base ────────────────────────────────────── */
+    section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 14px;
     }
-    .bg-violet {
-      background: #8b5cf6;
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
+      letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 16px;
     }
-    .quiz-option {
-      background: #1e1e2a;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      margin-bottom: 0.5rem;
-      cursor: pointer;
-      transition: 0.1s;
+    .section-sub { color: var(--muted); max-width: 520px; line-height: 1.7; margin-bottom: 56px; }
+
+    /* ── Modules Grid ────────────────────────────────────── */
+    .modules-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
     }
-    .quiz-option.selected {
-      background: #8b5cf6;
-      color: white;
+    .module-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 28px;
+      cursor: pointer; transition: all .25s;
+      position: relative; overflow: hidden;
     }
-    input, select, textarea {
-      background: #1f2937;
-      border: 1px solid #374151;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      color: white;
-      width: 100%;
-      margin-bottom: 0.75rem;
+    .module-card::before {
+      content: ''; position: absolute; inset: 0; opacity: 0;
+      background: linear-gradient(135deg, rgba(168,85,247,0.05), transparent);
+      transition: opacity .25s;
     }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .module-card:hover { border-color: rgba(168,85,247,0.35); transform: translateY(-3px); box-shadow: var(--card-glow); }
+    .module-card:hover::before { opacity: 1; }
+    .module-icon {
+      width: 46px; height: 46px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 18px;
     }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
+    .module-num {
+      font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
     }
-    .toast {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #10b981;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 9999px;
-      z-index: 1000;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    .module-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+    .module-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+    .module-tag {
+      display: inline-block; margin-top: 16px;
+      background: rgba(255,255,255,0.05); border-radius: 6px;
+      padding: 4px 10px; font-size: 0.75rem; color: var(--muted);
     }
-    .toast.error {
-      background: #ef4444;
+    .module-card.locked .module-icon { filter: grayscale(1); opacity: .5; }
+    .lock-badge {
+      position: absolute; top: 16px; right: 16px;
+      font-size: 0.75rem; color: var(--muted);
     }
-    .flex-between {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+
+    /* ── Lesson View ─────────────────────────────────────── */
+    #lesson-view {
+      display: none; position: fixed; inset: 0; z-index: 150;
+      background: var(--bg); overflow-y: auto;
+      padding: 0;
+    }
+    .lesson-header {
+      position: sticky; top: 0; background: rgba(10,13,20,0.9);
+      backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 40px; z-index: 10;
+    }
+    .back-btn {
+      background: none; border: 1px solid var(--border); color: var(--text);
+      border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 0.85rem;
+      font-family: 'DM Sans', sans-serif; transition: all .2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .back-btn:hover { border-color: rgba(255,255,255,.25); }
+    .lesson-body { max-width: 780px; margin: 0 auto; padding: 60px 24px; }
+    .lesson-body h2 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    .lesson-lead { color: var(--muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
+    .tip-box {
+      background: rgba(168,85,247,0.07); border-left: 3px solid var(--accent);
+      border-radius: 0 12px 12px 0; padding: 18px 22px; margin: 24px 0;
+    }
+    .tip-box strong { color: var(--accent); font-size: 0.8rem; letter-spacing: .08em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+    .warn-box {
+      background: rgba(255,84,112,0.07); border-left: 3px solid var(--accent3);
+      border-radius: 0 12px 12px 0; padding: 18px 22px; margin: 24px 0;
+    }
+    .warn-box strong { color: var(--accent3); font-size: 0.8rem; letter-spacing: .08em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+    .lesson-body h3 { font-size: 1.25rem; font-weight: 700; margin: 36px 0 14px; }
+    .lesson-body p { line-height: 1.8; color: var(--muted); margin-bottom: 14px; }
+    .example-block {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 24px; margin: 20px 0;
+    }
+    .example-block .label { font-size: 0.75rem; color: var(--accent); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
+    .example-block p { color: var(--text); margin: 0; font-style: italic; }
+    .checklist { list-style: none; margin: 16px 0; }
+    .checklist li {
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px; color: var(--muted); font-size: 0.93rem; line-height: 1.6;
+    }
+    .checklist li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .next-btn-wrap { margin-top: 56px; display: flex; justify-content: flex-end; gap: 12px; }
+
+    /* ── Simulation ──────────────────────────────────────── */
+    #simulation-view {
+      display: none; position: fixed; inset: 0; z-index: 150;
+      background: var(--bg); overflow-y: auto;
+    }
+    .sim-header {
+      position: sticky; top: 0; background: rgba(10,13,20,0.9);
+      backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 40px; z-index: 10;
+    }
+    .sim-body { max-width: 720px; margin: 0 auto; padding: 50px 24px; }
+    .interviewer-card {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 20px 24px; margin-bottom: 32px;
+    }
+    .avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .interviewer-info small { font-size: 0.78rem; color: var(--muted); }
+    .interviewer-info strong { font-size: 1rem; display: block; }
+    .sim-question {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 28px;
+      margin-bottom: 24px; position: relative;
+    }
+    .sim-question .q-label { font-size: 0.75rem; color: var(--muted); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+    .sim-question .q-text { font-size: 1.1rem; font-weight: 500; line-height: 1.6; }
+    .sim-progress { display: flex; gap: 6px; margin-bottom: 32px; }
+    .sim-dot {
+      height: 4px; border-radius: 2px; flex: 1;
+      background: var(--surface2);
+      transition: background .4s;
+    }
+    .sim-dot.done { background: var(--accent); }
+    .sim-dot.active { background: var(--accent2); }
+    .response-area {
+      width: 100%; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: var(--r);
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; line-height: 1.7; padding: 20px;
+      resize: none; height: 160px; outline: none;
+      transition: border-color .2s;
+    }
+    .response-area:focus { border-color: rgba(168,85,247,0.45); }
+    .sim-actions { display: flex; gap: 12px; margin-top: 16px; justify-content: flex-end; }
+    .feedback-block {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 24px; margin-top: 20px;
+      display: none; animation: fadeIn .4s;
+    }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+    .feedback-block .fb-label { font-size: 0.75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent2); margin-bottom: 10px; }
+    .score-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2);
+      color: var(--accent); border-radius: 100px; padding: 4px 12px;
+      font-size: 0.8rem; font-weight: 700; margin-bottom: 12px;
+    }
+    .loading-dots span {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); margin: 0 2px;
+      animation: dot 1.2s infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: .2s; }
+    .loading-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes dot { 0%,80%,100%{transform:scale(0);opacity:.3} 40%{transform:scale(1);opacity:1} }
+
+    /* ── Quiz ─────────────────────────────────────────────── */
+    #quiz-view {
+      display: none; position: fixed; inset: 0; z-index: 150;
+      background: var(--bg); overflow-y: auto;
+    }
+    .quiz-header {
+      position: sticky; top: 0; background: rgba(10,13,20,0.9);
+      backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 40px;
+    }
+    .quiz-body { max-width: 700px; margin: 0 auto; padding: 50px 24px; }
+    .quiz-counter { font-family: 'Syne', sans-serif; font-size: 0.85rem; color: var(--muted); }
+    .quiz-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 32px; margin-bottom: 24px;
+    }
+    .quiz-card .q-num { font-size: 0.78rem; color: var(--accent); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 14px; }
+    .quiz-card .q-text { font-size: 1.1rem; font-weight: 600; line-height: 1.55; margin-bottom: 28px; }
+    .options-grid { display: flex; flex-direction: column; gap: 10px; }
+    .option-btn {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 18px;
+      cursor: pointer; transition: all .2s; text-align: left;
+      font-family: 'DM Sans', sans-serif; font-size: 0.93rem; color: var(--text);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .option-btn:hover:not(:disabled) { border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.06); }
+    .option-btn.correct { background: rgba(0,229,160,0.12); border-color: var(--accent); color: var(--accent); }
+    .option-btn.wrong { background: rgba(255,84,112,0.1); border-color: var(--accent3); color: var(--accent3); }
+    .option-letter {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; flex-shrink: 0;
+    }
+    .quiz-explanation {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px; margin-top: 14px;
+      font-size: 0.88rem; color: var(--muted); line-height: 1.65; display: none;
+    }
+    .quiz-nav { display: flex; justify-content: flex-end; margin-top: 16px; }
+    .results-screen { text-align: center; padding: 60px 24px; }
+    .results-score {
+      font-family: 'Syne', sans-serif; font-size: 5rem; font-weight: 800;
+      line-height: 1; margin: 24px 0 8px;
+    }
+    .results-score.great { color: var(--accent); }
+    .results-score.ok { color: #f5c842; }
+    .results-score.low { color: var(--accent3); }
+    .results-badge {
+      font-size: 3rem; margin-bottom: 12px; display: block;
+    }
+    .results-breakdown {
+      display: flex; gap: 24px; justify-content: center; margin: 36px 0;
       flex-wrap: wrap;
-      gap: 1rem;
     }
-    h1 {
-      font-size: 2.5rem;
-      background: linear-gradient(to right, #ffffff, #c084fc, #a855f7);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+    .rb-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px 28px; text-align: center; min-width: 140px;
     }
-    @media (min-width: 768px) {
-      h1 { font-size: 4rem; }
-      .container { padding: 2rem; }
+    .rb-num { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; }
+    .rb-label { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── How it works ─────────────────────────────────────── */
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px; }
+    .step-card {
+      background: var(--surface); padding: 32px 28px;
+      position: relative; transition: background .2s;
+    }
+    .step-card:hover { background: var(--surface2); }
+    .step-card:first-child { border-radius: var(--r) 0 0 var(--r); }
+    .step-card:last-child { border-radius: 0 var(--r) var(--r) 0; }
+    .step-num {
+      font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800;
+      color: rgba(255,255,255,0.05); line-height: 1; margin-bottom: 16px;
+    }
+    .step-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
+    .step-desc { font-size: 0.87rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── CTA Band ──────────────────────────────────────────── */
+    .cta-band {
+      background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(124,58,237,0.1));
+      border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 20px; padding: 60px 48px;
+      text-align: center; margin: 0 auto; max-width: 860px;
+    }
+    .cta-band h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 14px; }
+    .cta-band p { color: var(--muted); margin-bottom: 32px; font-size: 1.05rem; }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center; padding: 32px 24px;
+      color: var(--muted); font-size: 0.83rem;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      section { padding: 70px 20px; }
+      .hero-stats { gap: 28px; }
+      .lesson-header, .sim-header, .quiz-header { padding: 16px 20px; }
+      .lesson-body, .sim-body, .quiz-body { padding: 40px 20px; }
+      .step-card:first-child, .step-card:last-child { border-radius: 0; }
+      .steps-grid { grid-template-columns: 1fr; gap: 2px; }
+      .cta-band { padding: 40px 24px; }
     }
   </style>
 </head>
 <body>
-<div id="app" class="container"></div>
+
+<!-- Progress Bar -->
+<div class="progress-bar-nav" id="progressBar"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="logo">Call<span>Master</span></div>
+  <ul class="nav-links">
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#simulation" onclick="openSim(); return false;">Simulation</a></li>
+    <li><a href="#quiz" onclick="openQuiz(); return false;">Quiz</a></li>
+    <li><a href="#how">Comment ça marche</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<div id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="badge">Formation gratuite &amp; interactive</div>
+  <h1 class="hero-title">Décrochez votre poste<br>en <em>centre d'appel</em></h1>
+  <p class="hero-sub">Maîtrisez chaque étape de l'entretien d'embauche : des bases du métier jusqu'à la simulation IA en temps réel.</p>
+  <div class="btn-group">
+    <a class="btn-primary" href="#modules">Commencer la formation →</a>
+    <a class="btn-ghost" href="#how">Comment ça marche</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Modules</div></div>
+    <div class="stat-item"><div class="stat-num">IA</div><div class="stat-label">Simulation réelle</div></div>
+    <div class="stat-item"><div class="stat-num">20</div><div class="stat-label">Questions quiz</div></div>
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Gratuit</div></div>
+  </div>
+</div>
+
+<!-- ═══════════ MODULES ═══════════ -->
+<section id="modules">
+  <div class="section-label">Programme complet</div>
+  <h2 class="section-title">6 modules pour tout maîtriser</h2>
+  <p class="section-sub">De la première impression à la négociation, chaque module vous prépare concrètement à l'entretien.</p>
+
+  <div class="modules-grid">
+    <div class="module-card" onclick="openLesson(0)">
+      <div class="module-icon" style="background:rgba(0,229,160,0.12)">📞</div>
+      <div class="module-num">Module 01</div>
+      <div class="module-title">Le métier de téléconseiller</div>
+      <div class="module-desc">Comprendre les missions, les types de centres d'appel (inbound/outbound) et les compétences attendues.</div>
+      <div class="module-tag">~8 min</div>
+    </div>
+    <div class="module-card" onclick="openLesson(1)">
+      <div class="module-icon" style="background:rgba(0,106,255,0.12)">🎯</div>
+      <div class="module-num">Module 02</div>
+      <div class="module-title">Préparer son CV et sa candidature</div>
+      <div class="module-desc">Les mots-clés qui attirent les recruteurs, les erreurs à éviter et la lettre de motivation percutante.</div>
+      <div class="module-tag">~10 min</div>
+    </div>
+    <div class="module-card" onclick="openLesson(2)">
+      <div class="module-icon" style="background:rgba(255,84,112,0.12)">💬</div>
+      <div class="module-num">Module 03</div>
+      <div class="module-title">Les questions classiques</div>
+      <div class="module-desc">Parlez-moi de vous, vos forces/faiblesses, pourquoi ce poste — répondre avec la méthode STAR.</div>
+      <div class="module-tag">~12 min</div>
+    </div>
+    <div class="module-card" onclick="openLesson(3)">
+      <div class="module-icon" style="background:rgba(255,200,0,0.12)">🎙️</div>
+      <div class="module-num">Module 04</div>
+      <div class="module-title">Communication et voix</div>
+      <div class="module-desc">Débit, articulation, ton, vocabulaire professionnel et gestion du stress au téléphone.</div>
+      <div class="module-tag">~9 min</div>
+    </div>
+    <div class="module-card" onclick="openLesson(4)">
+      <div class="module-icon" style="background:rgba(160,80,255,0.12)">🤝</div>
+      <div class="module-num">Module 05</div>
+      <div class="module-title">Gérer les situations difficiles</div>
+      <div class="module-desc">Clients en colère, appels complexes, objections — comment réagir et rassurer un recruteur.</div>
+      <div class="module-tag">~10 min</div>
+    </div>
+    <div class="module-card" onclick="openLesson(5)">
+      <div class="module-icon" style="background:rgba(0,229,160,0.1)">💰</div>
+      <div class="module-num">Module 06</div>
+      <div class="module-title">Salaire, avantages et suite</div>
+      <div class="module-desc">Négocier son salaire, les questions à poser au recruteur et le suivi après l'entretien.</div>
+      <div class="module-tag">~7 min</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ HOW ═══════════ -->
+<section id="how" style="padding-top:0">
+  <div class="section-label">Méthode</div>
+  <h2 class="section-title">Comment ça marche ?</h2>
+  <p class="section-sub">Une progression en 4 étapes concrètes pour aller de zéro à confiant.</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-title">Lisez les modules</div>
+      <div class="step-desc">Théorie claire, exemples réels et conseils pratiques classés du plus simple au plus avancé.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-title">Pratiquez avec l'IA</div>
+      <div class="step-desc">Répondez aux vraies questions d'entretien et recevez un feedback instantané de l'IA.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-title">Testez vos connaissances</div>
+      <div class="step-desc">Quiz final de 20 questions pour valider votre maîtrise et obtenir votre score certifié.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">04</div>
+      <div class="step-title">Postulez avec confiance</div>
+      <div class="step-desc">Vous avez les outils, les formulations et la posture pour faire bonne impression dès le premier appel.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA ═══════════ -->
+<section id="simulation" style="padding-top:0">
+  <div class="cta-band">
+    <h2>Prêt pour votre simulation d'entretien ?</h2>
+    <p>Notre IA joue le rôle du recruteur et vous donne un feedback personnalisé sur chaque réponse.</p>
+    <div class="btn-group" style="justify-content:center">
+      <button class="btn-primary" onclick="openSim()">Démarrer la simulation IA →</button>
+      <button class="btn-ghost" onclick="openQuiz()">Faire le quiz final</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <p>Call Master — Formation gratuite publiée sur GitHub Pages</p>
+  <p style="margin-top:8px"><a href="#">GitHub</a> · Construit avec ❤️ pour aider les candidats</p>
+</footer>
+
+
+<!-- ═══════════════════════════════ -->
+<!--   LESSON VIEW                   -->
+<!-- ═══════════════════════════════ -->
+<div id="lesson-view">
+  <div class="lesson-header">
+    <button class="back-btn" onclick="closeLesson()">← Retour</button>
+    <span id="lesson-breadcrumb" style="color:var(--muted);font-size:0.85rem;"></span>
+  </div>
+  <div class="lesson-body" id="lesson-content"></div>
+</div>
+
+
+<!-- ═══════════════════════════════ -->
+<!--   SIMULATION VIEW               -->
+<!-- ═══════════════════════════════ -->
+<div id="simulation-view">
+  <div class="sim-header">
+    <button class="back-btn" onclick="closeSim()">← Retour</button>
+    <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;">Simulation d'entretien IA</span>
+    <span id="sim-q-counter" style="color:var(--muted);font-size:0.85rem;">Question 1/8</span>
+  </div>
+  <div class="sim-body">
+    <div class="interviewer-card">
+      <div class="avatar">👩‍💼</div>
+      <div class="interviewer-info">
+        <strong>Sophie Martin</strong>
+        <small>Responsable RH — Centre d'appel TeloPro</small>
+      </div>
+    </div>
+    <div class="sim-progress" id="sim-progress"></div>
+    <div class="sim-question">
+      <div class="q-label">Question en cours</div>
+      <div class="q-text" id="sim-q-text">Chargement...</div>
+    </div>
+    <textarea class="response-area" id="sim-response" placeholder="Tapez votre réponse ici..."></textarea>
+    <div class="sim-actions">
+      <button class="btn-ghost" onclick="skipSimQ()">Passer →</button>
+      <button class="btn-primary" onclick="submitSimResponse()">Soumettre ma réponse</button>
+    </div>
+    <div class="feedback-block" id="sim-feedback">
+      <div class="fb-label">Feedback de l'IA</div>
+      <div id="sim-feedback-content"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════ -->
+<!--   QUIZ VIEW                     -->
+<!-- ═══════════════════════════════ -->
+<div id="quiz-view">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="closeQuiz()">← Retour</button>
+    <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;">Quiz Final</span>
+    <span class="quiz-counter" id="quiz-counter">1 / 20</span>
+  </div>
+  <div class="quiz-body" id="quiz-body"></div>
+</div>
+
 
 <script>
-  // ========== STOCKAGE LOCAL ==========
-  const STORAGE = {
-    users: "callmaster_users",
-    formations: "callmaster_lessons",
-    reservations: "callmaster_reservations",
-    payments: "callmaster_payments",
-    currentUser: "callmaster_currentUser"
-  };
+// ═══════════════════════════════════════════════════
+//  LESSONS DATA
+// ═══════════════════════════════════════════════════
+const lessons = [
+  {
+    title: "Le métier de téléconseiller",
+    icon: "📞",
+    content: `
+      <h2>Module 01 — Le métier de téléconseiller</h2>
+      <p class="lesson-lead">Avant de convaincre un recruteur, vous devez comprendre précisément à quoi ressemble le poste. Un candidat qui connaît le métier inspire confiance dès les premières secondes de l'entretien.</p>
 
-  // Données par défaut (modules)
-  const defaultLessons = [
-    { id: "l1", title: "📞 Introduction au métier de call center", content: "Découvrez les types de centres d'appels (inbound/outbound), les soft skills indispensables, et les évolutions de carrière au Maroc.", isPremium: false, order: 1, quiz: null },
-    { id: "l2", title: "🗣️ Techniques de communication pro", content: "Écoute active, maîtrise de la voix, gestion du stress, reformulation et empathie.", isPremium: false, order: 2, quiz: null },
-    { id: "l3", title: "📝 Phrases professionnelles clés", content: "Scripts d'appels types : ouverture, gestion des objections, prise de rendez-vous.", isPremium: false, order: 3, quiz: { question: "Quelle phrase est idéale pour débuter un appel professionnel ?", options: ["Allô ?", "Bonjour, je vous écoute", "Bonjour, je suis [Nom] de [Société], comment puis-je vous aider ?"], correct: 2 } },
-    { id: "l4", title: "🔥 Gestion des clients difficiles", content: "Méthode LAEC (Lire, Accuser, Expliquer, Conclure) + exemples concrets.", isPremium: false, order: 4, quiz: null },
-    { id: "l5", title: "🎯 Préparation à l'entretien call center", content: "Questions types RH, astuces CV, tenue vestimentaire, mise en situation.", isPremium: false, order: 5, quiz: null },
-    { id: "p1", title: "⭐ Premium : Négociation & Vente", content: "Vidéo exclusive + PDF + cas pratiques pour devenir un conseiller commercial.", isPremium: true, order: 6, quiz: null },
-    { id: "p2", title: "⭐ Premium : Simulation d'appel avancée", content: "Replay d'une session réelle avec feedback d'expert.", isPremium: true, order: 7, quiz: null }
-  ];
+      <h3>Qu'est-ce qu'un centre d'appel ?</h3>
+      <p>Un centre d'appel (ou centre de contact) est une structure dédiée à la gestion des communications téléphoniques — et de plus en plus digitales — entre une entreprise et ses clients. On distingue deux grands types :</p>
+      <ul class="checklist">
+        <li><strong>Inbound (entrant)</strong> : vous répondez aux appels des clients. Service client, support technique, hotline.</li>
+        <li><strong>Outbound (sortant)</strong> : vous appelez les prospects ou clients. Vente, prospection, enquêtes de satisfaction.</li>
+        <li><strong>Mixte</strong> : les deux à la fois, de plus en plus courant.</li>
+      </ul>
 
-  function initData() {
-    if (!localStorage.getItem(STORAGE.users)) {
-      const users = [
-        { id: "u1", name: "Admin CallMaster", email: "admin@callmaster.ma", whatsapp: "+212600000000", password: "admin123", level: "Expert", isAdmin: true, purchasedPremium: true, completedLessons: [], reservations: [] },
-        { id: "u2", name: "Yassine Maroc", email: "test@maroc.ma", whatsapp: "+212612345678", password: "test123", level: "Débutant", isAdmin: false, purchasedPremium: false, completedLessons: [], reservations: [] }
-      ];
-      localStorage.setItem(STORAGE.users, JSON.stringify(users));
-    }
-    if (!localStorage.getItem(STORAGE.formations)) {
-      localStorage.setItem(STORAGE.formations, JSON.stringify(defaultLessons));
-    }
-    if (!localStorage.getItem(STORAGE.reservations)) {
-      localStorage.setItem(STORAGE.reservations, JSON.stringify([]));
-    }
-    if (!localStorage.getItem(STORAGE.payments)) {
-      localStorage.setItem(STORAGE.payments, JSON.stringify([]));
-    }
+      <h3>Les missions quotidiennes</h3>
+      <p>Un téléconseiller gère en moyenne 50 à 120 appels par jour selon le secteur. Ses missions incluent :</p>
+      <ul class="checklist">
+        <li>Accueillir et identifier le client, comprendre sa demande</li>
+        <li>Apporter une réponse ou orienter vers le bon service</li>
+        <li>Saisir les informations dans un CRM (logiciel de gestion)</li>
+        <li>Respecter les scripts et procédures internes</li>
+        <li>Atteindre des indicateurs de performance (taux de résolution, satisfaction client)</li>
+      </ul>
+
+      <div class="tip-box">
+        <strong>💡 Astuce entretien</strong>
+        Si on vous demande "qu'est-ce qui vous attire dans ce poste ?", mentionnez le contact humain, votre aisance à communiquer et votre intérêt pour la résolution de problèmes. Évitez de dire "je n'ai pas trouvé autre chose".
+      </div>
+
+      <h3>Les compétences clés attendues</h3>
+      <p>Les recruteurs de centres d'appel évaluent principalement :</p>
+      <ul class="checklist">
+        <li><strong>Écoute active</strong> : reformuler, comprendre avant de répondre</li>
+        <li><strong>Empathie</strong> : se mettre à la place du client sans perdre son professionnalisme</li>
+        <li><strong>Résistance au stress</strong> : gérer les pics d'activité et les clients difficiles</li>
+        <li><strong>Adaptabilité</strong> : changer de script, de ton, de sujet rapidement</li>
+        <li><strong>Organisation</strong> : multi-tâche (parler, saisir, chercher en simultané)</li>
+      </ul>
+
+      <div class="warn-box">
+        <strong>⚠️ À ne pas dire</strong>
+        "Je suis patient(e)" tout seul ne suffit pas. Donnez un exemple concret : "Dans mon expérience de caissière, j'ai géré une longue file d'attente tout en gardant le sourire, c'est ce qui m'a montré que je savais gérer la pression."
+      </div>
+
+      <h3>Exemple de question liée à ce module</h3>
+      <div class="example-block">
+        <div class="label">Question recruteur</div>
+        <p>"Quelle est selon vous la différence entre un appel entrant et un appel sortant, et lequel préférez-vous ?"</p>
+      </div>
+      <div class="example-block">
+        <div class="label">Bonne réponse type</div>
+        <p>"Un appel entrant, c'est répondre à un besoin existant du client — il est demandeur. Un appel sortant, c'est aller vers le client, il faut donc plus de proactivité et de gestion du refus. J'ai une préférence pour les appels entrants car j'aime apporter des solutions concrètes, mais je suis à l'aise dans les deux configurations."</p>
+      </div>
+    `
+  },
+  {
+    title: "Préparer son CV et sa candidature",
+    icon: "🎯",
+    content: `
+      <h2>Module 02 — Préparer son CV et sa candidature</h2>
+      <p class="lesson-lead">Votre CV est la première chose que voit le recruteur. Dans le secteur des centres d'appel, les recruteurs passent en moyenne 7 secondes sur un CV. Voici comment maximiser ces 7 secondes.</p>
+
+      <h3>Les mots-clés incontournables</h3>
+      <p>Les logiciels de tri automatique (ATS) et les recruteurs cherchent ces termes :</p>
+      <ul class="checklist">
+        <li>Gestion de la relation client / CRM</li>
+        <li>Appels entrants / sortants</li>
+        <li>Résolution de problèmes au premier appel (FCR)</li>
+        <li>Satisfaction client / NPS</li>
+        <li>Outil : Salesforce, Zendesk, Avaya, Genesys</li>
+        <li>KPI, tableau de bord, suivi des indicateurs</li>
+      </ul>
+
+      <div class="tip-box">
+        <strong>💡 Même sans expérience</strong>
+        Si c'est votre premier poste, mettez en avant vos expériences indirectes : travail en commerce, bénévolat, service à la clientèle, accueil. Toute expérience de contact avec le public compte.
+      </div>
+
+      <h3>Structure idéale du CV</h3>
+      <ul class="checklist">
+        <li><strong>Titre :</strong> "Téléconseiller(ère) Service Client" — pas juste "En recherche d'emploi"</li>
+        <li><strong>Accroche :</strong> 2-3 lignes résumant votre valeur ajoutée</li>
+        <li><strong>Expériences :</strong> résultats chiffrés si possible ("traitement de 80 appels/jour")</li>
+        <li><strong>Compétences :</strong> séparées en techniques et relationnelles</li>
+        <li><strong>Formation :</strong> inclure toute certification de communication ou service client</li>
+      </ul>
+
+      <h3>La lettre de motivation en 3 paragraphes</h3>
+      <div class="example-block">
+        <div class="label">Paragraphe 1 — Accroche</div>
+        <p>"Passionné(e) par la relation client depuis X années, je suis convaincu(e) que la qualité d'un échange téléphonique peut transformer l'expérience d'un client."</p>
+      </div>
+      <div class="example-block">
+        <div class="label">Paragraphe 2 — Votre valeur</div>
+        <p>"Ma capacité d'écoute et ma gestion du stress, développées lors de [expérience], me permettent de répondre efficacement même dans les situations les plus délicates."</p>
+      </div>
+      <div class="example-block">
+        <div class="label">Paragraphe 3 — Conclusion</div>
+        <p>"Je serais ravi(e) de vous présenter ma motivation lors d'un entretien, et de vous démontrer comment je pourrais contribuer à la satisfaction de vos clients."</p>
+      </div>
+
+      <div class="warn-box">
+        <strong>⚠️ Les 5 erreurs fatales</strong>
+        Fautes d'orthographe · Photo inappropriée · Mail peu professionnel (style "kikoolol@...") · CV de plus de 2 pages · Lettre de motivation générique non personnalisée
+      </div>
+    `
+  },
+  {
+    title: "Les questions classiques",
+    icon: "💬",
+    content: `
+      <h2>Module 03 — Les questions classiques</h2>
+      <p class="lesson-lead">Certaines questions reviennent dans 95% des entretiens. Les connaître à l'avance vous permet de préparer des réponses structurées et naturelles plutôt que d'improviser sous stress.</p>
+
+      <h3>La méthode STAR</h3>
+      <p>Pour toute question comportementale ("Parlez-moi d'une fois où..."), utilisez la structure STAR :</p>
+      <ul class="checklist">
+        <li><strong>S — Situation :</strong> Le contexte en 1-2 phrases</li>
+        <li><strong>T — Tâche :</strong> Votre rôle / responsabilité</li>
+        <li><strong>A — Action :</strong> Ce que vous avez fait concrètement</li>
+        <li><strong>R — Résultat :</strong> Le résultat mesurable ou l'apprentissage</li>
+      </ul>
+
+      <h3>"Parlez-moi de vous"</h3>
+      <div class="tip-box">
+        <strong>💡 Formule gagnante</strong>
+        Passé (expérience pertinente) → Présent (ce que vous apportez) → Futur (pourquoi ce poste). Durée idéale : 90 secondes maximum.
+      </div>
+      <div class="example-block">
+        <div class="label">Exemple de réponse</div>
+        <p>"J'ai 2 ans d'expérience en service client dans la grande distribution, ce qui m'a appris à gérer des situations stressantes avec calme. Aujourd'hui, je cherche à évoluer vers un poste téléphonique pour exploiter pleinement mes aptitudes à l'écoute et à la communication. Ce poste chez vous correspond parfaitement à cette évolution."</p>
+      </div>
+
+      <h3>"Quelles sont vos forces ?"</h3>
+      <p>Choisissez 2-3 qualités directement liées au poste, toujours illustrées d'un exemple :</p>
+      <ul class="checklist">
+        <li>Écoute active → "Je reformule toujours la demande avant de répondre pour éviter les malentendus"</li>
+        <li>Patience → "Lors de mon stage, j'ai géré un client mécontent pendant 20 minutes jusqu'à résolution complète"</li>
+        <li>Adaptabilité → "Je change de registre selon le profil du client : plus technique avec certains, plus rassurant avec d'autres"</li>
+      </ul>
+
+      <h3>"Quelles sont vos faiblesses ?"</h3>
+      <div class="warn-box">
+        <strong>⚠️ Pièges à éviter</strong>
+        Ne jamais dire "Je suis perfectionniste" (cliché) ou "Je n'ai pas de faiblesses" (arrogance). Choisissez une vraie faiblesse non critique ET montrez comment vous la travaillez.
+      </div>
+      <div class="example-block">
+        <div class="label">Bonne réponse</div>
+        <p>"J'ai parfois du mal à raccrocher rapidement quand je sens qu'un client a besoin d'être rassuré — ce qui peut rallonger les appels. J'apprends à équilibrer l'empathie et l'efficacité en utilisant des formules de clôture bienveillantes."</p>
+      </div>
+
+      <h3>"Pourquoi voulez-vous travailler ici ?"</h3>
+      <p>Faites toujours vos recherches sur l'entreprise : secteur, valeurs, réputation. Reliez leurs besoins à vos compétences.</p>
+    `
+  },
+  {
+    title: "Communication et voix",
+    icon: "🎙️",
+    content: `
+      <h2>Module 04 — Communication et voix</h2>
+      <p class="lesson-lead">Au téléphone, votre voix est votre seul outil. Les recruteurs évaluent souvent les candidats par téléphone avant l'entretien physique. Voici comment faire une excellente première impression.</p>
+
+      <h3>Les 4 piliers de la voix professionnelle</h3>
+      <ul class="checklist">
+        <li><strong>Débit :</strong> ni trop rapide (stressant), ni trop lent (ennuyeux). Environ 130-150 mots/minute.</li>
+        <li><strong>Tonalité :</strong> voix légèrement plus grave = confiance. Évitez les montées en fin de phrase (questions non posées).</li>
+        <li><strong>Articulation :</strong> détachez bien chaque syllabe. Évitez de "manger" les mots surtout en fin de phrase.</li>
+        <li><strong>Sourire :</strong> ça s'entend. Un sourire audible améliore la perception du client de +20%.</li>
+      </ul>
+
+      <div class="tip-box">
+        <strong>💡 Exercice avant l'entretien</strong>
+        Enregistrez-vous en vous présentant. Réécoutez et notez : est-ce que vous articulez bien ? Votre voix est-elle stable ? Y a-t-il des "euh", "hmm" excessifs ? Pratiquez jusqu'à vous sentir naturel(le).
+      </div>
+
+      <h3>Vocabulaire à privilégier</h3>
+      <ul class="checklist">
+        <li>✓ "Je comprends votre situation" plutôt que "C'est pas de ma faute"</li>
+        <li>✓ "Je vais m'occuper de votre dossier" plutôt que "Je sais pas"</li>
+        <li>✓ "Avez-vous d'autres questions ?" plutôt que "C'est tout ?"</li>
+        <li>✓ "Je vous propose de..." plutôt que "Vous devez..."</li>
+      </ul>
+
+      <h3>Gestion du stress pendant l'entretien</h3>
+      <p>Le stress se perçoit dans la voix : elle se brise, monte ou accélère. Techniques :</p>
+      <ul class="checklist">
+        <li>Respirez profondément avant de décrocher / entrer dans la salle</li>
+        <li>Prenez 2 secondes de silence avant de répondre — ça ne se ressent pas, ça rassure</li>
+        <li>Si vous ne savez pas, dites "Très bonne question, permettez-moi de réfléchir un instant"</li>
+        <li>Posture droite = voix plus posée, même au téléphone</li>
+      </ul>
+
+      <div class="example-block">
+        <div class="label">À l'entretien : ouverture parfaite</div>
+        <p>"Bonjour [Prénom du recruteur], je suis [Votre prénom], ravi(e) de vous rencontrer. J'ai hâte de vous présenter ma candidature pour le poste de téléconseiller(ère)."</p>
+      </div>
+
+      <div class="warn-box">
+        <strong>⚠️ Tics de langage à éliminer</strong>
+        "Euh", "en fait", "voilà voilà", "c'est clair", "ouais" (remplacer par "oui"), "genre". Entraînez-vous à faire des pauses silencieuses plutôt que de remplir avec des tics.
+      </div>
+    `
+  },
+  {
+    title: "Gérer les situations difficiles",
+    icon: "🤝",
+    content: `
+      <h2>Module 05 — Gérer les situations difficiles</h2>
+      <p class="lesson-lead">Les recruteurs en centre d'appel adorent les mises en situation. "Qu'est-ce que vous faites si un client crie ?" Ce module vous donne les réponses qui rassurent.</p>
+
+      <h3>La méthode DESC pour les clients difficiles</h3>
+      <ul class="checklist">
+        <li><strong>D — Décrire :</strong> Reconnaître les faits objectivement ("Je vois que votre colis n'est pas arrivé...")</li>
+        <li><strong>E — Exprimer :</strong> Montrer de l'empathie ("Je comprends votre frustration, c'est totalement légitime")</li>
+        <li><strong>S — Solution :</strong> Proposer une action concrète ("Voici ce que je vais faire immédiatement...")</li>
+        <li><strong>C — Conclure :</strong> Valider la satisfaction ("Est-ce que cette solution vous convient ?")</li>
+      </ul>
+
+      <h3>Question piège : "Que faites-vous si un client est agressif ?"</h3>
+      <div class="example-block">
+        <div class="label">Mauvaise réponse</div>
+        <p>"Je raccrocherais si ça dépasse les bornes." → Trop personnel, peu professionnel.</p>
+      </div>
+      <div class="example-block">
+        <div class="label">Bonne réponse</div>
+        <p>"Je maintiens une voix calme et professionnelle. Je reconnais d'abord sa frustration sans valider l'agressivité. Je lui propose une solution concrète. Si l'agressivité persiste et dépasse le cadre professionnel, je l'informe poliment que je vais mettre fin à l'appel et je le fais selon la procédure de l'entreprise."</p>
+      </div>
+
+      <div class="tip-box">
+        <strong>💡 Le principe du miroir vocal</strong>
+        Ne jamais descendre au niveau émotionnel du client en colère. Votre calme est contagieux. Parlez moins vite, plus bas — le client finit généralement par s'adapter à votre rythme.
+      </div>
+
+      <h3>"Parlez-moi d'une situation difficile que vous avez gérée"</h3>
+      <p>Utilisez la méthode STAR (Module 03) avec une vraie situation. Si vous n'avez pas d'expérience client, utilisez un exemple de la vie courante :</p>
+      <div class="example-block">
+        <div class="label">Exemple sans expérience pro</div>
+        <p>"Lors d'un travail de groupe en formation, un désaccord a créé une tension. J'ai pris l'initiative de demander à chacun d'exprimer son point de vue avant de chercher un compromis. Le projet a été rendu en temps et chacun s'est senti écouté."</p>
+      </div>
+
+      <h3>Questions sur l'absentéisme et la régularité</h3>
+      <p>Les centres d'appel ont souvent des problèmes d'absentéisme. On vous demandera probablement :</p>
+      <ul class="checklist">
+        <li>"Avez-vous des contraintes horaires ?" → Soyez honnête mais positif</li>
+        <li>"Comment gérez-vous les plannings tournants ?" → Montrez votre flexibilité</li>
+        <li>"Êtes-vous disponible les weekends/soirs ?" → Précisez dès maintenant vos disponibilités réelles</li>
+      </ul>
+    `
+  },
+  {
+    title: "Salaire, avantages et suite",
+    icon: "💰",
+    content: `
+      <h2>Module 06 — Salaire, avantages et suite</h2>
+      <p class="lesson-lead">Beaucoup de candidats bâclent la fin de l'entretien. C'est pourtant là que vous pouvez vous démarquer et montrer votre motivation réelle.</p>
+
+      <h3>Négocier son salaire</h3>
+      <p>Pour un poste de téléconseiller débutant en France, la fourchette est généralement autour du SMIC à SMIC + 15%. Voici la stratégie :</p>
+      <ul class="checklist">
+        <li>Ne donnez jamais votre chiffre en premier si possible</li>
+        <li>Donnez une fourchette, pas un chiffre exact</li>
+        <li>Basez-vous sur les offres similaires du marché</li>
+        <li>Intégrez les avantages dans le calcul (tickets restaurant, transport, primes)</li>
+      </ul>
+
+      <div class="example-block">
+        <div class="label">Si on vous demande vos prétentions</div>
+        <p>"Sur la base des offres similaires que j'ai étudiées et de ma motivation pour ce poste, je me situe entre X€ et Y€ brut. Cependant, l'environnement de travail et les perspectives d'évolution sont également très importantes pour moi."</p>
+      </div>
+
+      <div class="tip-box">
+        <strong>💡 Les primes à ne pas oublier</strong>
+        Dans les centres d'appel, demandez : prime sur objectifs (variable), prime d'assiduité, tickets restaurant, mutuelle, possibilités de télétravail, et plan de carrière vers superviseur/formateur.
+      </div>
+
+      <h3>Les 5 questions à poser au recruteur</h3>
+      <ul class="checklist">
+        <li>"Quels sont les indicateurs sur lesquels je serai évalué(e) ?"</li>
+        <li>"Comment se passe la formation initiale ?"</li>
+        <li>"Quelle est la taille de l'équipe dans laquelle je serai ?"</li>
+        <li>"Quelles sont les perspectives d'évolution dans cette entreprise ?"</li>
+        <li>"Quelles sont les prochaines étapes du processus de recrutement ?"</li>
+      </ul>
+
+      <div class="warn-box">
+        <strong>⚠️ Questions à éviter</strong>
+        "Combien de jours de congé ?" (trop tôt) · "Peut-on être en retard parfois ?" · "Est-ce qu'on a beaucoup d'appels ?" (montre que vous n'avez pas compris le poste)
+      </div>
+
+      <h3>Le suivi post-entretien</h3>
+      <ul class="checklist">
+        <li>Envoyez un email de remerciement dans les 24h</li>
+        <li>Réitérez votre motivation en 2-3 phrases max</li>
+        <li>Si pas de retour après 7-10 jours, relancez poliment par email</li>
+        <li>Préparez un deuxième entretien possible (souvent avec le manager direct)</li>
+      </ul>
+
+      <div class="example-block">
+        <div class="label">Email de remerciement type</div>
+        <p>"Bonjour [Prénom], Je tenais à vous remercier pour cet échange enrichissant. Notre conversation a renforcé mon intérêt pour le poste et votre entreprise. Je reste disponible pour tout complément d'information. Cordialement, [Votre nom]"</p>
+      </div>
+    `
   }
-  initData();
+];
 
-  // Helpers
-  function getUsers() { return JSON.parse(localStorage.getItem(STORAGE.users)); }
-  function saveUsers(users) { localStorage.setItem(STORAGE.users, JSON.stringify(users)); }
-  function getLessons() { return JSON.parse(localStorage.getItem(STORAGE.formations)); }
-  function saveLessons(lessons) { localStorage.setItem(STORAGE.formations, JSON.stringify(lessons)); }
-  function getReservations() { return JSON.parse(localStorage.getItem(STORAGE.reservations)); }
-  function saveReservations(res) { localStorage.setItem(STORAGE.reservations, JSON.stringify(res)); }
-  function getPayments() { return JSON.parse(localStorage.getItem(STORAGE.payments)); }
-  function savePayments(payments) { localStorage.setItem(STORAGE.payments, JSON.stringify(payments)); }
-  function getCurrentUser() { return JSON.parse(localStorage.getItem(STORAGE.currentUser)); }
-  function setCurrentUser(user) { localStorage.setItem(STORAGE.currentUser, JSON.stringify(user)); }
-  function clearCurrentUser() { localStorage.removeItem(STORAGE.currentUser); }
+// ═══════════════════════════════════════════════════
+//  SIMULATION QUESTIONS
+// ═══════════════════════════════════════════════════
+const simQuestions = [
+  "Bonjour ! Pouvez-vous vous présenter en 1 à 2 minutes ?",
+  "Pourquoi souhaitez-vous travailler dans un centre d'appel, et pourquoi chez nous en particulier ?",
+  "Décrivez-moi une situation où vous avez dû gérer un client mécontent. Comment avez-vous réagi ?",
+  "Quelles sont vos 3 principales qualités pour ce poste de téléconseiller(ère) ?",
+  "Comment gérez-vous le stress lorsque vous avez de nombreux appels à gérer en même temps ?",
+  "Êtes-vous à l'aise avec les objectifs chiffrés et les indicateurs de performance ?",
+  "Où vous voyez-vous dans 2 ans au sein de notre entreprise ?",
+  "Avez-vous des questions à nous poser ?"
+];
 
-  function updateUser(updatedUser) {
-    const users = getUsers();
-    const idx = users.findIndex(u => u.id === updatedUser.id);
-    if (idx !== -1) users[idx] = updatedUser;
-    saveUsers(users);
-    if (getCurrentUser()?.id === updatedUser.id) setCurrentUser(updatedUser);
-  }
+// ═══════════════════════════════════════════════════
+//  QUIZ QUESTIONS
+// ═══════════════════════════════════════════════════
+const quizQuestions = [
+  { q: "Que signifie 'inbound' dans un centre d'appel ?", opts: ["Appels sortants vers les clients","Appels entrants des clients","Logiciel de gestion CRM","Formation interne"], ans: 1, exp: "Inbound = entrant. Les agents répondent aux appels des clients. L'outbound correspond aux appels sortants (prospection, vente)." },
+  { q: "La méthode STAR signifie :", opts: ["Service, Tâche, Aptitude, Résultat","Situation, Tâche, Action, Résultat","Stress, Ton, Analyse, Réponse","Sourire, Technique, Accueil, Rapidité"], ans: 1, exp: "STAR = Situation, Tâche, Action, Résultat. C'est la méthode idéale pour structurer des réponses comportementales en entretien." },
+  { q: "Face à un client agressif, la première chose à faire est :", opts: ["Raccrocher immédiatement","Élever la voix pour reprendre le contrôle","Maintenir un ton calme et reconnaître sa frustration","Transférer l'appel sans explication"], ans: 2, exp: "Maintenir le calme est contagieux. Reconnaître la frustration du client avant de proposer une solution est la base de la gestion des situations difficiles." },
+  { q: "Quel outil est typiquement utilisé pour gérer les données clients dans un call center ?", opts: ["Excel uniquement","Un CRM (Customer Relationship Management)","WhatsApp Business","Google Forms"], ans: 1, exp: "Un CRM comme Salesforce ou Zendesk permet de gérer l'historique client, les tickets, et les interactions. C'est l'outil central dans les call centers." },
+  { q: "Quelle est la durée idéale pour répondre à 'Parlez-moi de vous' ?", opts: ["30 secondes maximum","90 secondes environ","5 minutes pour être complet","Aussi longtemps que nécessaire"], ans: 1, exp: "90 secondes est la durée idéale : assez court pour capter l'attention, assez long pour donner les éléments clés (passé, présent, futur)." },
+  { q: "Quelle réponse à 'Quelles sont vos faiblesses ?' est la meilleure ?", opts: ["Je n'ai pas de faiblesses particulières","Je suis perfectionniste, c'est ma seule faiblesse","J'ai tendance à trop m'impliquer, je travaille à mieux déléguer","Je suis parfois lent mais je compense par ma précision"], ans: 2, exp: "Il faut citer une vraie faiblesse non critique ET montrer les actions concrètes que vous prenez pour la corriger. Les clichés comme 'perfectionniste' sont à éviter." },
+  { q: "Qu'est-ce que le FCR (First Call Resolution) ?", opts: ["Le tarif des appels longue distance","La résolution du problème client dès le premier appel","Le nombre d'appels par heure","La formation continue des agents"], ans: 1, exp: "Le FCR (résolution au premier appel) est un indicateur clé de performance. Un taux élevé signifie que les clients n'ont pas besoin de rappeler." },
+  { q: "Quel est le meilleur moment pour poser des questions au recruteur ?", opts: ["Avant même qu'il parle","Au milieu de l'entretien","À la fin, quand il vous invite à poser vos questions","Par email avant l'entretien"], ans: 2, exp: "Posez vos questions à la fin de l'entretien, quand le recruteur vous y invite. Cela montre votre intérêt sans perturber la structure de l'entretien." },
+  { q: "Comment doit être votre adresse email sur le CV ?", opts: ["Pseudo créatif type 'gamer2000@...'","Prénom.nom@domaine.com","Le pseudo que vous utilisez sur les réseaux","Peu importe, ce n'est pas important"], ans: 1, exp: "Une adresse email professionnelle (prénom.nom) est indispensable. Une adresse fantaisiste donne une mauvaise première impression au recruteur." },
+  { q: "La méthode DESC (gestion de clients difficiles) signifie :", opts: ["Décrire, Exprimer, Solution, Conclure","Définir, Escalader, Signaler, Clore","Discuter, Écouter, Satisfaire, Clôturer","Délai, Explication, Solution, Confirmation"], ans: 0, exp: "DESC = Décrire (les faits), Exprimer (de l'empathie), Solution (proposer une action), Conclure (valider la satisfaction du client)." },
+  { q: "Quel débit de parole est recommandé au téléphone ?", opts: ["Moins de 80 mots par minute","Entre 130 et 150 mots par minute","Plus de 200 mots par minute pour être efficace","Le débit n'a pas d'importance"], ans: 1, exp: "130-150 mots/minute est le rythme idéal : assez rapide pour sembler dynamique, assez lent pour être clairement compris." },
+  { q: "Que signifie l'outbound dans un centre d'appel ?", opts: ["Appels entrants","Appels sortants (prospection, vente)","Emails automatiques","Formation externe"], ans: 1, exp: "Outbound = sortant. Les agents appellent des prospects ou clients pour de la vente, de la prospection ou des enquêtes de satisfaction." },
+  { q: "Pour répondre à 'Pourquoi vous et pas un autre ?', la meilleure stratégie est :", opts: ["Critiquer les autres candidats","Parler uniquement de vos diplômes","Connecter vos compétences spécifiques aux besoins du poste","Dire que vous avez vraiment besoin de ce travail"], ans: 2, exp: "Cette question exige que vous montriez comment VOS compétences spécifiques répondent aux besoins précis du poste. Restez concret et factuel." },
+  { q: "Quel terme désigne un agent qui gère à la fois les appels entrants et sortants ?", opts: ["Agent hybride / mixte","Double agent","Agent polyvalent senior","Téléopérateur universel"], ans: 0, exp: "Un poste mixte ou hybride combine les deux flux : inbound et outbound. C'est de plus en plus courant dans les call centers modernes." },
+  { q: "À quel délai maximum faut-il envoyer un email de remerciement après l'entretien ?", opts: ["1 semaine","24 heures","48 heures","Uniquement si vous êtes retenu"], ans: 1, exp: "Envoyer un email de remerciement dans les 24h montre votre motivation, votre réactivité, et garde votre nom présent dans l'esprit du recruteur." },
+  { q: "Que signifie le NPS dans un call center ?", opts: ["Net Performance Score","Net Promoter Score (probabilité de recommandation)","Number of Phone Services","Normal Protocol Standard"], ans: 1, exp: "Le NPS (Net Promoter Score) mesure la probabilité qu'un client recommande l'entreprise. C'est un indicateur clé de satisfaction client." },
+  { q: "Une question sur vos disponibilités (soirs, weekends) vous est posée. Que faites-vous ?", opts: ["Dites oui à tout pour être embauché","Répondez honnêtement sur vos vraies disponibilités","Évitez la question","Dites que ça dépend du salaire"], ans: 1, exp: "Mentir sur ses disponibilités crée des problèmes dès la prise de poste. Soyez honnête tout en montrant votre flexibilité là où elle existe vraiment." },
+  { q: "Comment gérer un silence après votre réponse pendant l'entretien ?", opts: ["Remplissez immédiatement avec du contenu pour éviter le vide","Attendez calmement, le silence est normal et professionnel","Demandez si le recruteur a bien compris","Recommencez votre réponse depuis le début"], ans: 1, exp: "Les silences sont normaux et professionnels. Le recruteur prend des notes ou réfléchit à sa prochaine question. Resté calme inspire confiance." },
+  { q: "Pour votre CV, quelle information est la plus impactante dans la section 'Expériences' ?", opts: ["La liste complète de vos tâches","Des résultats chiffrés ('80 appels/jour, taux satisfaction 92%')","Le nom de votre manager","La description détaillée de chaque journée"], ans: 1, exp: "Les résultats chiffrés parlent d'eux-mêmes et montrent votre impact réel. Un recruteur préfère '80 appels/jour' à 'gestion des appels téléphoniques'." },
+  { q: "Quelle est la meilleure façon de conclure un entretien ?", opts: ["Partir rapidement pour montrer que vous êtes occupé","Remercier, réaffirmer votre motivation et demander les prochaines étapes","Attendre que le recruteur mette fin à l'entretien","Demander si vous êtes sélectionné immédiatement"], ans: 1, exp: "Conclure avec gratitude, enthousiasme et une question sur les prochaines étapes montre du professionnalisme et maintient la dynamique de votre candidature." }
+];
 
-  function showToast(msg, isError = false) {
-    const div = document.createElement('div');
-    div.className = isError ? 'toast error' : 'toast';
-    div.textContent = msg;
-    document.body.appendChild(div);
-    setTimeout(() => div.remove(), 3000);
-  }
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let simQIndex = 0;
+let quizQIndex = 0;
+let quizScore = 0;
+let quizAnswered = 0;
+let quizCompleted = false;
 
-  // État de navigation
-  let currentView = 'home';
-  let selectedLessonId = null;
-  let pendingProduct = null;
+// ═══════════════════════════════════════════════════
+//  PROGRESS BAR
+// ═══════════════════════════════════════════════════
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
 
-  function navigate(view, data = null) {
-    currentView = view;
-    if (view === 'lessonDetail') selectedLessonId = data;
-    if (view === 'payment') pendingProduct = data;
-    render();
-    window.scrollTo(0, 0);
-  }
+// ═══════════════════════════════════════════════════
+//  LESSON
+// ═══════════════════════════════════════════════════
+function openLesson(idx) {
+  const l = lessons[idx];
+  document.getElementById('lesson-breadcrumb').textContent = `Module ${String(idx+1).padStart(2,'0')} — ${l.title}`;
+  const body = document.getElementById('lesson-content');
+  body.innerHTML = l.content + `
+    <div class="next-btn-wrap">
+      ${idx > 0 ? `<button class="btn-ghost" onclick="openLesson(${idx-1})">← Module précédent</button>` : ''}
+      ${idx < lessons.length-1 ? `<button class="btn-primary" onclick="openLesson(${idx+1})">Module suivant →</button>` : `<button class="btn-primary" onclick="closeLesson(); openSim()">Aller à la simulation →</button>`}
+    </div>
+  `;
+  document.getElementById('lesson-view').style.display = 'block';
+  document.getElementById('lesson-view').scrollTop = 0;
+}
+function closeLesson() {
+  document.getElementById('lesson-view').style.display = 'none';
+}
 
-  // Rendu principal
-  function render() {
-    const app = document.getElementById('app');
-    const user = getCurrentUser();
-    if (currentView === 'home') app.innerHTML = renderHome(user);
-    else if (currentView === 'login') app.innerHTML = renderLogin();
-    else if (currentView === 'register') app.innerHTML = renderRegister();
-    else if (currentView === 'dashboard') {
-      if (!user) { navigate('login'); showToast('Veuillez vous connecter', true); return; }
-      app.innerHTML = renderDashboard(user);
+// ═══════════════════════════════════════════════════
+//  SIMULATION
+// ═══════════════════════════════════════════════════
+function openSim() {
+  simQIndex = 0;
+  document.getElementById('simulation-view').style.display = 'block';
+  document.getElementById('simulation-view').scrollTop = 0;
+  renderSimQ();
+}
+function closeSim() {
+  document.getElementById('simulation-view').style.display = 'none';
+}
+function renderSimQ() {
+  const total = simQuestions.length;
+  document.getElementById('sim-q-counter').textContent = `Question ${simQIndex+1}/${total}`;
+  document.getElementById('sim-q-text').textContent = simQuestions[simQIndex];
+  document.getElementById('sim-response').value = '';
+  document.getElementById('sim-feedback').style.display = 'none';
+  document.getElementById('sim-feedback-content').innerHTML = '';
+
+  // dots
+  const prog = document.getElementById('sim-progress');
+  prog.innerHTML = simQuestions.map((_,i) =>
+    `<div class="sim-dot ${i < simQIndex ? 'done' : i === simQIndex ? 'active' : ''}"></div>`
+  ).join('');
+}
+
+async function submitSimResponse() {
+  const resp = document.getElementById('sim-response').value.trim();
+  if (!resp) { alert('Veuillez écrire une réponse avant de soumettre.'); return; }
+
+  const fb = document.getElementById('sim-feedback');
+  const fbc = document.getElementById('sim-feedback-content');
+  fb.style.display = 'block';
+  fbc.innerHTML = `<div style="text-align:center;padding:16px 0"><div class="loading-dots"><span></span><span></span><span></span></div><p style="color:var(--muted);font-size:0.85rem;margin-top:8px">L'IA analyse votre réponse...</p></div>`;
+
+  try {
+    const aiResponse = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: `Tu es Sophie Martin, une responsable RH expérimentée dans le recrutement pour centres d'appel. Tu évalues les réponses de candidats lors d'une simulation d'entretien.
+
+Donne un feedback structuré, bienveillant mais honnête en français. Réponds UNIQUEMENT en JSON avec ce format exact:
+{
+  "score": <nombre entre 1 et 10>,
+  "positifs": ["point fort 1", "point fort 2"],
+  "ameliorations": ["conseil 1", "conseil 2"],
+  "exemple": "Une reformulation améliorée de la réponse en 2-3 phrases"
+}
+Sois précis, pratique et encourageant. Adapte le feedback au contexte d'un poste en centre d'appel.`,
+        messages: [{
+          role: "user",
+          content: `Question posée: "${simQuestions[simQIndex]}"\n\nRéponse du candidat: "${resp}"`
+        }]
+      })
+    });
+
+    const data = await aiResponse.json();
+    const text = data.content?.map(i => i.text || '').join('') || '';
+    let parsed;
+    try {
+      const clean = text.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(clean);
+    } catch(e) {
+      parsed = null;
     }
-    else if (currentView === 'formation') {
-      if (!user) { navigate('login'); return; }
-      app.innerHTML = renderFormationList(user);
-    }
-    else if (currentView === 'lessonDetail') {
-      if (!user) { navigate('login'); return; }
-      app.innerHTML = renderLessonDetail(user, selectedLessonId);
-    }
-    else if (currentView === 'reservation') {
-      if (!user) { navigate('login'); return; }
-      app.innerHTML = renderReservationPage(user);
-    }
-    else if (currentView === 'payment') {
-      if (!user) { navigate('login'); return; }
-      app.innerHTML = renderPaymentPage(user, pendingProduct);
-    }
-    else if (currentView === 'faq') app.innerHTML = renderFAQ();
-    else if (currentView === 'admin') {
-      if (!user || !user.isAdmin) { showToast('Accès refusé', true); navigate('home'); return; }
-      app.innerHTML = renderAdminDashboard(user);
-    }
-    attachEvents();
-  }
 
-  // ========== COMPOSANTS UI ==========
-  function renderHome(user) {
-    return `
-      <div style="text-align: center; margin-bottom: 3rem;">
-        <h1>CallMaster</h1>
-        <p style="font-size: 1.2rem; margin-top: 1rem; color: #cbd5e1;">Décrochez votre premier emploi en centre d'appels au Maroc, même sans expérience.</p>
-        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
-          <button class="btn-primary" onclick="window.navigateView('register')">✨ Commencer gratuitement</button>
-          <button class="btn-secondary" onclick="window.navigateView('login')">🔐 Se connecter</button>
+    if (parsed) {
+      const scoreColor = parsed.score >= 7 ? 'var(--accent)' : parsed.score >= 5 ? '#f5c842' : 'var(--accent3)';
+      fbc.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <div class="score-pill">⭐ ${parsed.score}/10</div>
         </div>
-      </div>
-      <div class="grid-3">
-        <div class="card" style="padding: 1.5rem; text-align: center;">
-          <div style="font-size: 2.5rem;">📘</div>
-          <h3 style="margin: 0.5rem 0;">Parcours gratuit</h3>
-          <p>5 modules essentiels + quiz</p>
-        </div>
-        <div class="card" style="padding: 1.5rem; text-align: center;">
-          <div style="font-size: 2.5rem;">⭐</div>
-          <h3 style="margin: 0.5rem 0;">Formation premium</h3>
-          <p>Certificat & simulations avancées</p>
-        </div>
-        <div class="card" style="padding: 1.5rem; text-align: center;">
-          <div style="font-size: 2.5rem;">🎧</div>
-          <h3 style="margin: 0.5rem 0;">Coaching réel</h3>
-          <p>Session 1:1 avec expert</p>
-        </div>
-      </div>
-      <div class="card" style="padding: 1.5rem; text-align: center; margin-top: 2rem;">
-        <p style="font-style: italic;">"Grâce à CallMaster, j'ai été embauché en 2 semaines !"</p>
-        <p style="font-weight: bold;">– Salma, Casablanca</p>
-      </div>
-      <div style="text-align: center; margin-top: 2rem;">
-        <button class="btn-secondary" onclick="window.navigateView('faq')">❓ FAQ & Questions fréquentes</button>
-      </div>
-    `;
-  }
-
-  function renderLogin() {
-    return `
-      <div class="card" style="max-width: 400px; margin: 2rem auto; padding: 2rem;">
-        <h2 style="margin-bottom: 1rem;">Connexion</h2>
-        <form id="loginForm">
-          <input type="email" id="loginEmail" placeholder="Email" required>
-          <input type="password" id="loginPassword" placeholder="Mot de passe" required>
-          <button type="submit" class="btn-primary" style="width: 100%;">Se connecter</button>
-        </form>
-        <p style="margin-top: 1rem; text-align: center;">Pas de compte ? <button onclick="window.navigateView('register')" style="background: none; border: none; color: #c084fc; cursor: pointer;">Inscription</button></p>
-      </div>
-    `;
-  }
-
-  function renderRegister() {
-    return `
-      <div class="card" style="max-width: 400px; margin: 2rem auto; padding: 2rem;">
-        <h2 style="margin-bottom: 1rem;">Inscription</h2>
-        <form id="registerForm">
-          <input type="text" id="regName" placeholder="Nom complet" required>
-          <input type="email" id="regEmail" placeholder="Email" required>
-          <input type="tel" id="regWhatsapp" placeholder="WhatsApp" required>
-          <input type="password" id="regPassword" placeholder="Mot de passe" required>
-          <select id="regLevel">
-            <option>Débutant</option>
-            <option>Intermédiaire</option>
-          </select>
-          <button type="submit" class="btn-primary" style="width: 100%;">Créer mon compte</button>
-        </form>
-        <p style="margin-top: 1rem; text-align: center;"><button onclick="window.navigateView('login')" style="background: none; border: none; color: #c084fc; cursor: pointer;">Déjà inscrit ? Connexion</button></p>
-      </div>
-    `;
-  }
-
-  function renderDashboard(user) {
-    const lessons = getLessons();
-    const total = lessons.length;
-    const completed = user.completedLessons?.length || 0;
-    const sessions = getReservations().filter(r => r.userId === user.id);
-    return `
-      <div class="flex-between">
-        <h2>📊 Tableau de bord, ${user.name}</h2>
-        <button class="btn-secondary" onclick="window.logout()">Déconnexion</button>
-      </div>
-      <div class="grid-3" style="margin-top: 1.5rem;">
-        <div class="card" style="padding: 1rem;"><div>Progression: ${completed}/${total}</div><div style="background:#374151; border-radius:999px; height:8px; margin-top:8px;"><div style="width:${(completed/total)*100}%; background:#8b5cf6; height:8px; border-radius:999px;"></div></div></div>
-        <div class="card" style="padding: 1rem;"><div>Premium: ${user.purchasedPremium ? '✅ Activé' : '🔒 Non acheté'}</div><button onclick="window.buyPremium()" class="btn-primary" style="margin-top:8px; padding:4px 12px; font-size:0.8rem;">Acheter 199 MAD</button></div>
-        <div class="card" style="padding: 1rem;"><div>Sessions: ${sessions.length}</div><button onclick="window.navigateView('reservation')" class="text-violet" style="background:none; border:none; color:#c084fc; margin-top:8px;">📅 Réserver une simulation</button></div>
-      </div>
-      <div class="card" style="padding: 1.5rem; margin-top: 1.5rem;">
-        <h3>📚 Mes formations</h3>
-        <button onclick="window.navigateView('formation')" class="btn-primary" style="margin-top: 0.5rem;">Accéder aux modules</button>
-      </div>
-      ${sessions.length ? `<div class="card" style="margin-top:1rem; padding:1rem;"><h3>📌 Historique réservations</h3>${sessions.map(s => `<div>${s.type} - ${s.dateTime} (${s.status})</div>`).join('')}</div>` : ''}
-      ${user.isAdmin ? `<div style="margin-top:1rem;"><button onclick="window.navigateView('admin')" class="btn-primary" style="background:#7c3aed;">🛠️ Panel Admin</button></div>` : ''}
-    `;
-  }
-
-  function renderFormationList(user) {
-    const lessons = getLessons();
-    const premium = user.purchasedPremium;
-    return `
-      <button onclick="window.navigateView('dashboard')" class="btn-secondary" style="margin-bottom:1rem;">← Retour</button>
-      <h2>📖 Modules de formation</h2>
-      <div style="margin-top:1rem;">
-        ${lessons.map(l => {
-          const locked = l.isPremium && !premium;
-          return `<div class="card" style="padding:1rem; margin-bottom:0.75rem; display:flex; justify-content:space-between; align-items:center;"><span>${l.title} ${l.isPremium ? '⭐' : ''}</span><button onclick="window.openLesson('${l.id}')" class="btn-primary" style="padding:0.25rem 1rem;" ${locked ? 'disabled' : ''}>${locked ? '🔒 Premium' : 'Voir'}</button></div>`;
-        }).join('')}
-      </div>
-      ${!premium ? `<div class="card" style="margin-top:1rem; padding:1rem; background:#2e1a47;"><p>🔓 Débloquez tous les modules premium pour 199 MAD.</p><button onclick="window.buyPremium()" class="btn-primary">Upgrade maintenant</button></div>` : ''}
-    `;
-  }
-
-  function renderLessonDetail(user, lessonId) {
-    const lesson = getLessons().find(l => l.id === lessonId);
-    if (!lesson) return '<div>Leçon introuvable</div>';
-    const completed = user.completedLessons?.includes(lessonId);
-    const quiz = lesson.quiz;
-    return `
-      <button onclick="window.navigateView('formation')" class="btn-secondary">← Retour</button>
-      <div class="card" style="margin-top:1rem; padding:1.5rem;">
-        <h2>${lesson.title}</h2>
-        <div style="margin:1rem 0; background:#00000033; padding:1rem; border-radius:0.75rem;">${lesson.content}</div>
-        ${quiz ? `
-          <div id="quizBlock" style="margin-top:1rem; border-top:1px solid #374151; padding-top:1rem;">
-            <p><strong>${quiz.question}</strong></p>
-            ${quiz.options.map((opt, idx) => `<div class="quiz-option" data-opt="${idx}">${opt}</div>`).join('')}
-            <button id="validateQuiz" class="btn-primary" style="margin-top:0.5rem;">Valider</button>
-            <p id="quizFeedback"></p>
+        ${parsed.positifs?.length ? `
+          <p style="font-size:0.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Points forts</p>
+          <ul style="list-style:none;margin-bottom:16px">${parsed.positifs.map(p=>`<li style="padding:5px 0;font-size:0.9rem;color:var(--muted);display:flex;gap:8px"><span style="color:var(--accent)">✓</span>${p}</li>`).join('')}</ul>
+        ` : ''}
+        ${parsed.ameliorations?.length ? `
+          <p style="font-size:0.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f5c842;margin-bottom:8px">À améliorer</p>
+          <ul style="list-style:none;margin-bottom:16px">${parsed.ameliorations.map(a=>`<li style="padding:5px 0;font-size:0.9rem;color:var(--muted);display:flex;gap:8px"><span style="color:#f5c842">→</span>${a}</li>`).join('')}</ul>
+        ` : ''}
+        ${parsed.exemple ? `
+          <div style="background:rgba(0,106,255,0.07);border-left:3px solid var(--accent2);border-radius:0 10px 10px 0;padding:14px 16px;margin-top:8px">
+            <p style="font-size:0.75rem;color:var(--accent2);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Exemple de réponse améliorée</p>
+            <p style="font-size:0.9rem;color:var(--text);font-style:italic">${parsed.exemple}</p>
           </div>
         ` : ''}
-        ${!completed ? `<button id="markComplete" class="btn-primary" style="margin-top:1rem;">✅ Marquer comme terminé</button>` : `<p style="color:#10b981;">✔️ Leçon complétée !</p>`}
-      </div>
-    `;
+        <div style="margin-top:20px;text-align:right">
+          <button class="btn-primary" onclick="nextSimQ()">
+            ${simQIndex < simQuestions.length-1 ? 'Question suivante →' : 'Terminer la simulation ✓'}
+          </button>
+        </div>
+      `;
+    } else {
+      fbc.innerHTML = `<p style="color:var(--muted)">Réponse reçue mais impossible de la parser. Voici le retour brut :</p><p style="margin-top:8px;font-size:0.9rem">${text}</p><div style="margin-top:16px;text-align:right"><button class="btn-primary" onclick="nextSimQ()">Suivant →</button></div>`;
+    }
+  } catch(err) {
+    fbc.innerHTML = `<p style="color:var(--accent3)">Erreur de connexion à l'IA. Vérifiez votre connexion.</p><div style="margin-top:12px;text-align:right"><button class="btn-primary" onclick="nextSimQ()">Passer →</button></div>`;
   }
+}
 
-  function renderReservationPage(user) {
-    return `
-      <button onclick="window.navigateView('dashboard')" class="btn-secondary">← Retour</button>
-      <div class="card" style="max-width:500px; margin:1rem auto; padding:1.5rem;">
-        <h2>📅 Réserver une simulation</h2>
-        <form id="reserveForm">
-          <select id="sessionType"><option>Simulation d'entretien</option><option>Coaching individuel</option><option>Questions / réponses</option></select>
-          <input type="date" id="sessionDate" required>
-          <input type="time" id="sessionTime" required>
-          <p>💰 Prix: 100 MAD</p>
-          <button type="submit" class="btn-primary" style="width:100%;">Procéder au paiement</button>
-        </form>
-      </div>
-    `;
+function nextSimQ() {
+  simQIndex++;
+  if (simQIndex >= simQuestions.length) {
+    document.getElementById('simulation-view').style.display = 'none';
+    showSimComplete();
+  } else {
+    renderSimQ();
+    document.getElementById('simulation-view').scrollTop = 0;
   }
+}
 
-  function renderPaymentPage(user, product) {
-    const amount = product?.type === 'premium' ? 199 : 100;
-    const desc = product?.type === 'premium' ? 'Formation Premium' : `Session ${product?.sessionType || 'coaching'}`;
-    return `
-      <div class="card" style="max-width:500px; margin:2rem auto; padding:1.5rem;">
-        <h2>💳 Paiement sécurisé</h2>
-        <p>${desc}</p>
-        <p style="font-size:1.5rem; font-weight:bold;">${amount} MAD</p>
-        <select id="paymentMethod" style="margin:1rem 0;">
-          <option>Carte bancaire (CIH, BMCE)</option><option>CMI</option><option>PayPal</option><option>Virement bancaire</option><option>Orange Money</option>
-        </select>
-        <button id="confirmPayment" class="btn-primary" style="width:100%;">✅ Confirmer le paiement</button>
+function skipSimQ() {
+  nextSimQ();
+}
+
+function showSimComplete() {
+  alert('✅ Simulation terminée ! Bravo pour votre persévérance. Pensez à faire le quiz final pour valider vos connaissances théoriques.');
+}
+
+// ═══════════════════════════════════════════════════
+//  QUIZ
+// ═══════════════════════════════════════════════════
+function openQuiz() {
+  quizQIndex = 0;
+  quizScore = 0;
+  quizAnswered = 0;
+  quizCompleted = false;
+  document.getElementById('quiz-view').style.display = 'block';
+  document.getElementById('quiz-view').scrollTop = 0;
+  renderQuizQ();
+}
+function closeQuiz() {
+  document.getElementById('quiz-view').style.display = 'none';
+}
+
+function renderQuizQ() {
+  const q = quizQuestions[quizQIndex];
+  const body = document.getElementById('quiz-body');
+  document.getElementById('quiz-counter').textContent = `${quizQIndex+1} / ${quizQuestions.length}`;
+
+  const letters = ['A','B','C','D'];
+  body.innerHTML = `
+    <div style="margin-bottom:20px">
+      <div style="display:flex;gap:6px;margin-bottom:24px">
+        ${quizQuestions.map((_,i)=>`<div style="height:3px;flex:1;border-radius:2px;background:${i<quizQIndex?'var(--accent)':i===quizQIndex?'var(--accent2)':'var(--surface2)'}"></div>`).join('')}
       </div>
-    `;
-  }
-
-  function renderFAQ() {
-    const faqs = [
-      ["La formation gratuite est-elle suffisante ?", "Oui, vous aurez les bases. Premium ajoute simulations et certificat."],
-      ["Combien de temps pour être prêt ?", "1 à 2 semaines avec 30 min/jour."],
-      ["Aide pour les entretiens ?", "Oui, simulations réelles et coaching."],
-      ["Paiement plus tard ?", "Possible sur demande (contact)."],
-      ["Adapté aux débutants ?", "100% débutant friendly."]
-    ];
-    return `
-      <button onclick="window.navigateView('home')" class="btn-secondary">← Accueil</button>
-      <h2 style="margin:1rem 0;">❓ Foire aux questions</h2>
-      ${faqs.map(q => `<div class="card" style="margin-bottom:1rem; padding:1rem;"><h3>${q[0]}</h3><p>${q[1]}</p></div>`).join('')}
-    `;
-  }
-
-  function renderAdminDashboard(admin) {
-    const users = getUsers();
-    const lessons = getLessons();
-    const payments = getPayments();
-    return `
-      <h2>🛡️ Admin CallMaster</h2>
-      <div class="grid-3" style="margin:1rem 0;">
-        <div class="card" style="padding:1rem;">👥 Utilisateurs: ${users.length}</div>
-        <div class="card" style="padding:1rem;">📚 Modules: ${lessons.length}</div>
-        <div class="card" style="padding:1rem;">💰 Paiements: ${payments.length}</div>
+    </div>
+    <div class="quiz-card">
+      <div class="q-num">Question ${quizQIndex+1} sur ${quizQuestions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options-grid" id="options-grid">
+        ${q.opts.map((opt,i)=>`
+          <button class="option-btn" id="opt-${i}" onclick="selectQuizAnswer(${i})">
+            <div class="option-letter">${letters[i]}</div>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
       </div>
-      <div class="card" style="padding:1rem; margin-bottom:1rem;">
-        <h3>➕ Gérer formations</h3>
-        <button onclick="window.addLesson()" class="btn-primary" style="margin:0.5rem 0;">Ajouter un module</button>
-        ${lessons.map(l => `<div style="display:flex; justify-content:space-between; margin-top:0.5rem;"><span>${l.title} ${l.isPremium ? '(premium)' : ''}</span><div><button onclick="window.editLesson('${l.id}')" style="background:#f59e0b; border:none; padding:0.2rem 0.8rem; border-radius:0.5rem;">✏️</button> <button onclick="window.deleteLesson('${l.id}')" style="background:#ef4444; border:none; padding:0.2rem 0.8rem; border-radius:0.5rem;">🗑️</button></div></div>`).join('')}
-      </div>
-      <div class="card" style="padding:1rem;">
-        <h3>Utilisateurs</h3>
-        ${users.map(u => `<div style="display:flex; justify-content:space-between;"><span>${u.name} (${u.email})</span><button onclick="window.messageUser('${u.id}')" class="btn-secondary" style="padding:0.2rem 0.8rem;">📨 Message</button></div>`).join('')}
-      </div>
-    `;
+      <div class="quiz-explanation" id="quiz-exp">${q.exp}</div>
+    </div>
+    <div class="quiz-nav">
+      <button class="btn-primary" id="next-btn" onclick="nextQuizQ()" style="display:none">
+        ${quizQIndex < quizQuestions.length-1 ? 'Question suivante →' : 'Voir mes résultats 🎉'}
+      </button>
+    </div>
+  `;
+}
+
+function selectQuizAnswer(chosen) {
+  const q = quizQuestions[quizQIndex];
+  const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(b => b.disabled = true);
+
+  buttons[chosen].classList.add(chosen === q.ans ? 'correct' : 'wrong');
+  if (chosen !== q.ans) buttons[q.ans].classList.add('correct');
+  if (chosen === q.ans) quizScore++;
+  quizAnswered++;
+
+  document.getElementById('quiz-exp').style.display = 'block';
+  document.getElementById('next-btn').style.display = 'inline-flex';
+}
+
+function nextQuizQ() {
+  quizQIndex++;
+  if (quizQIndex >= quizQuestions.length) {
+    renderQuizResults();
+  } else {
+    renderQuizQ();
+    document.getElementById('quiz-view').scrollTop = 0;
   }
+}
 
-  // ========== GESTIONNAIRES D'ÉVÉNEMENTS ==========
-  function attachEvents() {
-    // Login
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-      loginForm.onsubmit = (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const pwd = document.getElementById('loginPassword').value;
-        const user = getUsers().find(u => u.email === email && u.password === pwd);
-        if (user) { setCurrentUser(user); showToast(`Bienvenue ${user.name}`); navigate('dashboard'); }
-        else showToast('Email ou mot de passe incorrect', true);
-      };
-    }
-    // Register
-    const regForm = document.getElementById('registerForm');
-    if (regForm) {
-      regForm.onsubmit = (e) => {
-        e.preventDefault();
-        const name = document.getElementById('regName').value;
-        const email = document.getElementById('regEmail').value;
-        const whatsapp = document.getElementById('regWhatsapp').value;
-        const pwd = document.getElementById('regPassword').value;
-        const level = document.getElementById('regLevel').value;
-        if (getUsers().find(u => u.email === email)) { showToast('Email déjà utilisé', true); return; }
-        const newUser = { id: Date.now().toString(), name, email, whatsapp, password: pwd, level, isAdmin: false, purchasedPremium: false, completedLessons: [], reservations: [] };
-        const users = getUsers();
-        users.push(newUser);
-        saveUsers(users);
-        setCurrentUser(newUser);
-        showToast('Compte créé avec succès !');
-        navigate('dashboard');
-      };
-    }
-    // Reservation
-    const reserveForm = document.getElementById('reserveForm');
-    if (reserveForm) {
-      reserveForm.onsubmit = (e) => {
-        e.preventDefault();
-        const sessionType = document.getElementById('sessionType').value;
-        const date = document.getElementById('sessionDate').value;
-        const time = document.getElementById('sessionTime').value;
-        if (!date || !time) { showToast('Date et heure requises', true); return; }
-        navigate('payment', { type: 'session', sessionType, dateTime: `${date} ${time}` });
-      };
-    }
-    // Paiement
-    const confirmBtn = document.getElementById('confirmPayment');
-    if (confirmBtn && currentView === 'payment') {
-      confirmBtn.onclick = () => {
-        const method = document.getElementById('paymentMethod').value;
-        const user = getCurrentUser();
-        const product = pendingProduct;
-        if (!product) return;
-        const payment = { id: Date.now(), userId: user.id, email: user.email, amount: product.type === 'premium' ? 199 : 100, method, date: new Date().toISOString() };
-        const payments = getPayments();
-        payments.push(payment);
-        savePayments(payments);
-        if (product.type === 'premium') {
-          user.purchasedPremium = true;
-          updateUser(user);
-          showToast('Formation premium activée !');
-          navigate('dashboard');
-        } else {
-          const reservations = getReservations();
-          const newRes = { id: Date.now(), userId: user.id, type: product.sessionType, dateTime: product.dateTime, status: 'confirmée', paymentId: payment.id };
-          reservations.push(newRes);
-          saveReservations(reservations);
-          if (!user.reservations) user.reservations = [];
-          user.reservations.push(newRes.id);
-          updateUser(user);
-          showToast(`Session réservée le ${product.dateTime}`);
-          navigate('dashboard');
-        }
-      };
-    }
-    // Marquer terminé
-    const markBtn = document.getElementById('markComplete');
-    if (markBtn && currentView === 'lessonDetail') {
-      markBtn.onclick = () => {
-        const user = getCurrentUser();
-        if (!user.completedLessons.includes(selectedLessonId)) {
-          user.completedLessons.push(selectedLessonId);
-          updateUser(user);
-          showToast('Progression mise à jour !');
-          render();
-        }
-      };
-    }
-    // Quiz validation
-    const validateQuiz = document.getElementById('validateQuiz');
-    if (validateQuiz && currentView === 'lessonDetail') {
-      const lesson = getLessons().find(l => l.id === selectedLessonId);
-      if (lesson?.quiz) {
-        let selectedOpt = null;
-        document.querySelectorAll('.quiz-option').forEach(el => {
-          el.onclick = function() {
-            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            selectedOpt = parseInt(this.dataset.opt);
-          };
-        });
-        validateQuiz.onclick = () => {
-          const feedback = document.getElementById('quizFeedback');
-          if (selectedOpt === lesson.quiz.correct) feedback.innerHTML = '<span style="color:#10b981;">✅ Bonne réponse !</span>';
-          else feedback.innerHTML = '<span style="color:#ef4444;">❌ Réessayez, relisez le module.</span>';
-        };
-      }
-    }
-  }
+function renderQuizResults() {
+  const pct = Math.round((quizScore / quizQuestions.length) * 100);
+  const isGreat = pct >= 75;
+  const isOk = pct >= 50;
+  const badge = isGreat ? '🏆' : isOk ? '📈' : '📚';
+  const msg = isGreat ? "Excellent ! Vous êtes prêt(e) pour votre entretien !" : isOk ? "Bon travail ! Quelques modules méritent une relecture." : "Continuez à vous entraîner, vous progressez !";
+  const cls = isGreat ? 'great' : isOk ? 'ok' : 'low';
 
-  // ========== FONCTIONS GLOBALES (pour les onclick) ==========
-  window.navigateView = navigate;
-  window.logout = () => { clearCurrentUser(); navigate('home'); showToast('Déconnecté'); };
-  window.buyPremium = () => navigate('payment', { type: 'premium' });
-  window.openLesson = (id) => {
-    const user = getCurrentUser();
-    const lesson = getLessons().find(l => l.id === id);
-    if (lesson?.isPremium && !user?.purchasedPremium) { showToast('Achetez la formation premium pour accéder', true); return; }
-    navigate('lessonDetail', id);
-  };
-  window.addLesson = () => {
-    const title = prompt('Titre du module');
-    if (!title) return;
-    const isPremium = confirm('Module premium ?');
-    const newLesson = { id: 'l'+Date.now(), title, content: 'Nouveau contenu à éditer', isPremium, order: 999, quiz: null };
-    const lessons = getLessons();
-    lessons.push(newLesson);
-    saveLessons(lessons);
-    render();
-    showToast('Module ajouté');
-  };
-  window.editLesson = (id) => {
-    const lessons = getLessons();
-    const lesson = lessons.find(l => l.id === id);
-    const newTitle = prompt('Modifier titre', lesson.title);
-    if (newTitle) lesson.title = newTitle;
-    saveLessons(lessons);
-    render();
-  };
-  window.deleteLesson = (id) => {
-    if (confirm('Supprimer ce module ?')) {
-      let lessons = getLessons().filter(l => l.id !== id);
-      saveLessons(lessons);
-      render();
-    }
-  };
-  window.messageUser = (userId) => {
-    const msg = prompt('Message à envoyer :');
-    if (msg) showToast(`Message envoyé à l'utilisateur (simulation)`);
-  };
-
-  // Premier rendu
-  render();
+  document.getElementById('quiz-body').innerHTML = `
+    <div class="results-screen">
+      <span class="results-badge">${badge}</span>
+      <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:8px">${msg}</h2>
+      <p style="color:var(--muted);margin-bottom:4px">Votre score final</p>
+      <div class="results-score ${cls}">${pct}%</div>
+      <p style="color:var(--muted);font-size:0.9rem">${quizScore} bonnes réponses sur ${quizQuestions.length}</p>
+      <div class="results-breakdown">
+        <div class="rb-item">
+          <div class="rb-num" style="color:var(--accent)">${quizScore}</div>
+          <div class="rb-label">Correctes</div>
+        </div>
+        <div class="rb-item">
+          <div class="rb-num" style="color:var(--accent3)">${quizQuestions.length - quizScore}</div>
+          <div class="rb-label">À revoir</div>
+        </div>
+        <div class="rb-item">
+          <div class="rb-num">${pct}%</div>
+          <div class="rb-label">Score final</div>
+        </div>
+      </div>
+      <div class="btn-group" style="justify-content:center;margin-top:16px">
+        <button class="btn-primary" onclick="openQuiz()">Recommencer le quiz</button>
+        <button class="btn-ghost" onclick="closeQuiz()">Retour à la formation</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('quiz-counter').textContent = 'Terminé !';
+}
 </script>
 </body>
 </html>
